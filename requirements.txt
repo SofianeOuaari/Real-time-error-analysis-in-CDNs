@@ -1,4 +1,5 @@
 kafka-python
+argparse
 numpy
 pandas
 pyspark
