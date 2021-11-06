@@ -37,18 +37,13 @@ if __name__ == "__main__":
     StructField("voltage",StringType()),
     StructField("volumeflow",StringType())])
     
-    # Select the data present in the column value and apply the schema on it
-    #json_df = string_df.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
     json_df = string_df.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
-    json_df.writeStream.outputMode("append").format("console").option("truncate", "false").start()
-    #print(json_df)
-    
+
     # Print out the dataframa schema
     numerical_columns=["accelo1rms", "accelo2rms","current","pressure","temperature","thermocouple","voltage","volumeflow"]
     for col_name in numerical_columns:
         json_df = json_df.withColumn(col_name, col(col_name).cast('float'))
 
-    print(json_df.printSchema())
     json_df=json_df.na.drop("any")
     cols = ("accelo1rms", "accelo2rms","current","pressure","temperature","thermocouple","voltage","volumeflow")
     assembler = VectorAssembler().setInputCols(cols).setOutputCol("features")
