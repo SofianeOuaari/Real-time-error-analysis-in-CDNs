@@ -17,7 +17,8 @@ consumer = KafkaConsumer(
      group_id='pxl-group',
      value_deserializer=lambda x: loads(x.decode('utf-8')))
 producer_elk = KafkaProducer(bootstrap_servers=['localhost:9092'], value_serializer=lambda x: dumps(x).encode('utf-8'))
-es.indices.delete("predictions")
+if "predictions" in es.indices.get('*'):
+    es.indices.delete("predictions")
 
 request_body = {
     "settings" : {
