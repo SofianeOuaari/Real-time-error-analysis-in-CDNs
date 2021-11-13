@@ -1,0 +1,11 @@
+---
+version: '3.4'
+services:
+  # 1.0.0 - Initial version of cdn client data provider
+  data_provider:
+    image: ${CDN_REGISTRY}/data_provider:1.0.0
+    build:
+      context: ${CDN_HOME}/
+      dockerfile: ${CDN_HOME}/build/data_provider/Dockerfile
+      args:
+        CDN_REGISTRY: ${CDN_REGISTRY}
