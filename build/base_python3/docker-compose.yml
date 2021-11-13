@@ -1,0 +1,8 @@
+---
+version: '3'
+services:
+  # 1.0.0 First version with basic python packages
+  base_python3:
+    image: ${CDN_REGISTRY}/base_python3:1.0.0
+    build:
+      context: .
