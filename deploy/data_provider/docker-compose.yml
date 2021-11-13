@@ -1,0 +1,14 @@
+---
+version: '3'
+
+services:
+  data_provider:
+    image: ${CDN_REGISTRY}/data_provider:1.0.0
+    hostname: cdn-data_provider
+    container_name: cdn-data_provider
+    restart: always
+    #command: sleep 3000
+    environment:
+      CDN_HOME: '/home/cdnadm'
+    volumes:
+      - ${CDN_HOME}/deploy/data_provider/configs/:/home/cdnadm/configs/
