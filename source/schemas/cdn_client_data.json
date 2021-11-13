@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ContentDeliveryNetworkClientData",
+  "description": "Schema that describes data originated from a CDN client.",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "channel_id": {
+      "description": "Issued by a server in response to a client’s request made to the server.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "timestamp": {
+      "description": "Identifies when a certain event occurred, usually giving date and time of day",
+      "type": "string",
+      "format": "datetime"
+    },
+    "host_id": {
+      "description": "Technology that enables the client to watch, create and share videos in real time.",
+      "type": "integer"
+    },
+    "content_type": {
+      "description": "Indicate the original media type of the resource (prior to any content encoding applied for sending).",
+      "type": "integer"
+    },
+    "protocol": {
+      "description": "Version of http protocol.",
+      "type": "integer"
+    },
+    "content_id": {
+      "description": "Video on Demand asset identifier.",
+      "type": "integer"
+    },
+    "geo_location": {
+      "description": "Lat:long coordinates client’s IP.",
+      "type": "integer"
+    },
+    "user_id": {
+      "description": "the client which is accessing the service provided by the CDN provider.",
+      "type": "integer"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "channel_id",
+    "timestamp",
+    "host_id",
+    "content_type",
+    "protocol",
+    "content_id",
+    "geo_location",
+    "user_id"
+  ]
+}
