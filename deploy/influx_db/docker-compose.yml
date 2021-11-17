@@ -1,0 +1,15 @@
+---
+version: '2'
+
+services:
+  influxdb:
+    image: influxdb:1.8.0
+    container_name: cdn-influxdb
+    hostname: cdn-influxdb
+    restart: always
+    ports:
+      - 8086:8086
+    volumes:
+      - ~/influx_db_data:/vol01/Docker/monitoring
+
+
