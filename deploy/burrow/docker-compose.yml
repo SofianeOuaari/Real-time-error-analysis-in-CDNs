@@ -1,0 +1,27 @@
+version: '3.4'
+services:
+  burrow:
+    image: ${CDN_REGISTRY}/burrow:1.0.0
+    hostname: burrow
+    container_name: cdn-burrow
+    volumes:
+      - ${CDN_HOME}/deploy/burrow/config/burrow_config:/etc/burrow
+      - ${CDN_HOME}/deploy/burrow/tmp/:/var/tmp/burrow
+    ports:
+      - 8000:8000
+    external_links:
+      - cdn-kafka_zookeeper
+      - cdn-kafka_broker
+    restart: always
+
+  burrow_kafka_metrics_loader:
+    image: ${CDN_REGISTRY}/telegraf:1.0.0
+    hostname: burrow_kafka_metrics_loader
+    container_name: cdn-burrow_kafka_metrics_loader
+    environment:
+      SERVICE_NAME: "burrow_kafka_metrics_loader"
+    restart: always
+    volumes:
+      - ${CDN_HOME}/deploy/burrow/config/telegraf_config/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    depends_on:
+      - burrow
