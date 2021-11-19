@@ -5,10 +5,15 @@ import pandas as pd
 
 
 
-df=pd.read_csv("./data/alldata_skab.csv",sep=",")
-df_train=df.iloc[:int(len(df)*0.75)]
-df_test=df.iloc[int(len(df)*0.75):]
+df=pd.read_csv("./data/CDN Client Error.csv",sep=",")
+df.set_index("")
+'''df_train=df.iloc[:int(len(df)*0.75)]
+df_test=df.iloc[int(len(df)*0.75):]'''
+df_train_cdn=df.iloc[:50000]
+df_test_cdn=df.iloc[50000:70000]
 
+'''df_train.to_csv("./data/train_cdn.csv",index=False)
+df_test.to_csv("./data/test_cdn.csv",index=False)'''
 
-df_train.to_csv("./data/train.csv",index=False)
-df_test.to_csv("./data/test.csv",index=False)
+df_train_cdn=df_train_cdn.to_csv("./data/train_cdn.csv",index=False)
+df_test_cdn=df_test_cdn.to_csv("./data/test_cdn.csv",index=False)

@@ -17,13 +17,16 @@ RUN apt-get update \
 
 # Install Python
 FROM python:3.9-slim
-RUN pip install --no-cache-dir matplotlib pandas numpy
+RUN pip install --no-cache-dir matplotlib pandas numpy sklearn
 # Install Java
 RUN apt-get update \
  && apt-get install -y openjdk-11-jre \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
-
+#ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/bin/java
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+#ENV JAVE_HOME=/usr/lib/jvm/java-11-oracle
+ENV PATH=$JAVA_HOME/jre/bin:$PATH
 # Install Maven 
 #FROM openjdk:8-jdk-slim
 #RUN apk add --no-cache curl tar bash procps
@@ -35,16 +38,16 @@ RUN apt-get update \
 RUN apt-get update 
 RUN apt-get install -y git
 RUN apt-get install -y wget
-RUN wget --no-verbose -O /tmp/apache-maven-3.3.9.tar.gz http://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
+RUN wget --no-verbose -O /tmp/apache-maven-3.6.3.tar.gz http://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
 
 # verify checksum
 #RUN echo "516923b3955b6035ba6b0a5b031fbd8b /tmp/apache-maven-3.6.3.tar.gz" | md5sum -c
 
 # install maven
-RUN tar xzf /tmp/apache-maven-3.3.9.tar.gz -C /opt/
-RUN ln -s /opt/apache-maven-3.3.9 /opt/maven
+RUN tar xzf /tmp/apache-maven-3.6.3.tar.gz -C /opt/
+RUN ln -s /opt/apache-maven-3.6.3 /opt/maven
 RUN ln -s /opt/maven/bin/mvn /usr/local/bin
-RUN rm -f /tmp/apache-maven-3.3.9.tar.gz
+RUN rm -f /tmp/apache-maven-3.6.3.tar.gz
 ENV MAVEN_HOME /opt/maven
 
 # remove download archive files
@@ -84,6 +87,7 @@ COPY models $SPARK_HOME/models
 COPY requirements.txt $SPARK_HOME/requirements.txt
 
 RUN pip3 install -r requirements.txt
+COPY spark-iforest $SPARK_HOME/spark-iforest
 
 # Run commands
 CMD ["bin/spark-class", "org.apache.spark.deploy.master.Master", "org.apache.spark.deploy.worker.Worker"]
