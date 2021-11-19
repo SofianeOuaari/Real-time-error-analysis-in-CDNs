@@ -1,20 +1,20 @@
-import pyspark
-from pyspark.sql.session import SparkSession
-from pyspark.sql.functions import explode, split, col, from_json
-from pyspark.sql.types import StructType, StructField, StringType, TimestampType, FloatType
+#!/usr/bin/env python
 from pyspark.ml.clustering import KMeansModel
 from pyspark.ml.feature import VectorAssembler
+from pyspark.sql.functions import col, from_json
+from pyspark.sql.session import SparkSession
+from pyspark.sql.types import StructType, StructField, StringType
 
 if __name__ == "__main__":
     spark = SparkSession \
         .builder \
-        .appName("Csv_Reader").getOrCreate()
+        .appName("Stream_Reader").getOrCreate()
 
     df = spark \
         .readStream \
         .format("kafka") \
         .option("kafka.bootstrap.servers", "localhost:9092") \
-        .option("subscribe", "voltage_data") \
+        .option("subscribe", "stream-CDN") \
         .option("startingOffsets", "earliest") \
         .load()
 
@@ -22,25 +22,24 @@ if __name__ == "__main__":
     string_df = df.selectExpr("CAST(value AS STRING)")
     print(string_df)
 
-    schema = StructType([StructField("timestamp", StringType()),
-                         StructField("accelo1rms", StringType()),
-                         StructField("accelo2rms", StringType()),
-                         StructField("current", StringType()),
-                         StructField("pressure", StringType()),
-                         StructField("temperature", StringType()),
-                         StructField("thermocouple", StringType()),
-                         StructField("voltage", StringType()),
-                         StructField("volumeflow", StringType())])
+    schema = StructType([StructField("channel_id", StringType()),
+                         StructField("timestamp", StringType()),
+                         StructField("host_id", StringType()),
+                         StructField("content_type", StringType()),
+                         StructField("protocol", StringType()),
+                         StructField("content_id", StringType()),
+                         StructField("geo_location", StringType()),
+                         StructField("user_id", StringType())])
 
     json_df = string_df.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
 
-    # Print out the dataframe schema
-    numerical_columns = ["accelo1rms", "accelo2rms", "current", "pressure", "temperature", "thermocouple", "voltage", "volumeflow"]
-    for col_name in numerical_columns:
-        json_df = json_df.withColumn(col_name, col(col_name).cast('float'))
+    # Print out the dataframa schema
+    int_columns = ["channel_id", "host_id", "content_type", "protocol", "content_id", "geo_location", "user_id"]
+    for col_name in int_columns:
+        json_df = json_df.withColumn(col_name, col(col_name).cast('int'))
 
     json_df = json_df.na.drop("any")
-    cols = ("accelo1rms", "accelo2rms", "current", "pressure", "temperature", "thermocouple", "voltage", "volumeflow")
+    cols = ("channel_id", "host_id", "content_type", "protocol", "content_id", "geo_location", "user_id")
     assembler = VectorAssembler().setInputCols(cols).setOutputCol("features")
     featureDf = assembler.transform(json_df)
     print(featureDf)

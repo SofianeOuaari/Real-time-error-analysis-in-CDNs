@@ -81,6 +81,9 @@ COPY log4j.properties $SPARK_HOME/conf
 COPY data $SPARK_HOME/data
 COPY spark_code $SPARK_HOME/spark_code
 COPY models $SPARK_HOME/models
+COPY requirements.txt $SPARK_HOME/requirements.txt
+
+RUN pip3 install -r requirements.txt
 
 # Run commands
 CMD ["bin/spark-class", "org.apache.spark.deploy.master.Master", "org.apache.spark.deploy.worker.Worker"]
