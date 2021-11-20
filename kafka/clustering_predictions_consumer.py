@@ -8,16 +8,16 @@ def json_serializer(data):
     return dumps(data).encode('utf-8')
 
 print("Connecting to consumer ...")
-es = Elasticsearch([ "localhost:9200"])
+#es = Elasticsearch([ "localhost:9200"])
 consumer = KafkaConsumer(
-        'spark_result',
+        'cdn_result',
      bootstrap_servers=['localhost:9092'],
      auto_offset_reset='earliest',
      enable_auto_commit=True,
-     group_id='pxl-group',
+     group_id='cdn-group',
      value_deserializer=lambda x: loads(x.decode('utf-8')))
 producer_elk = KafkaProducer(bootstrap_servers=['localhost:9092'], value_serializer=lambda x: dumps(x).encode('utf-8'))
-if "predictions" in es.indices.get('*'):
+'''if "predictions" in es.indices.get('*'):
     es.indices.delete("predictions")
 
 request_body = {
@@ -28,15 +28,15 @@ request_body = {
 }
 es.indices.create(index='predictions',body=request_body)
 for index in es.indices.get('*'):
-  print(index)
+  print(index)'''
 for message in consumer:
 
  print(f"{message.value}")
 
- response = es.index(index = 'predictions',document = message.value)
- print(response)
- sleep(2)
- producer_elk.send('elk_predictions',value=message.value)
+ #response = es.index(index = 'predictions',document = message.value)
+ #print(response)
+ '''sleep(2)
+ producer_elk.send('elk_predictions',value=message.value)'''
 
 
 
