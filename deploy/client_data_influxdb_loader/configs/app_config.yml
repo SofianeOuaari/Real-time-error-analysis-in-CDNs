@@ -1,0 +1,36 @@
+CDNInfluxDBLoader:
+  group_id: "client_data_influxdb_loader001"
+  kafka_input_topic: "cdn_client_data_storage"
+  influx_db_config:
+    input_conf:
+      database: "cdn_client_data_storage"
+      measurement:  "cdn_client_data"
+      query: "SELECT * FROM cdn_client_data"
+
+    output_conf:
+      database: "cdn_client_data_storage"
+      measurement: !!python/dict {"measurement": "cdn_client_data"}
+      schema:
+        tags:
+          - user_id
+          - host_id
+        time: timestamp
+        fields:
+          - channel_id
+          - content_type
+          - content_id
+          - protocol
+          - geo_location
+      type_map:
+        channel_id: "int"
+        host_id: "int"
+        content_type: "int"
+        content_id: "int"
+        user_id: "int"
+        protocol: "int"
+        geo_location: "int"
+      write_conf:
+        time_precision: "ms"
+        batch_size: 10
+        protocol: "json"
+

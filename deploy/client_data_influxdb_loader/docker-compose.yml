@@ -1,0 +1,14 @@
+---
+version: '3'
+
+services:
+  client_data_influxdb_loader:
+    image: ${CDN_REGISTRY}/client_data_influxdb_loader:1.0.0
+    hostname: cdn-client_data_influxdb_loader
+    container_name: cdn-client_data_influxdb_loader
+    restart: always
+    #command: sleep 3000
+    environment:
+      CDN_HOME: '/home/cdnadm'
+    volumes:
+      - ${CDN_HOME}/deploy/client_data_influxdb_loader/configs/:/home/cdnadm/configs/
