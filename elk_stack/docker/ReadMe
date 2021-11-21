@@ -1,0 +1,27 @@
+Filebeat is used to send Logs to elasticsearch and Kibana.
+So, all docker container logs encoded in JSON will be decoded and visualized in Kibana.
+
+Logs will be written in files by Docker. FileBeat then will have the task to read those logs from files 
+and transfer them to ElasticSearch. So, here, Logstash won't be used and will be substituted by Filebeat 
+as it requires less resources. 
+
+A docker-compose file will be used for the setup with the Elasticsearch, Kibana, and Filbeat services.
+The official docker images will be used.
+
+
+
+All you have to do is the following:
+
+1) In docker-compose.yml, for filebeat volumes :
+   Make sure to change your work directory by a valid path on your computer for this to work.
+
+
+2) In the directory containing the docker-compose.yml file, run the command:
+   docker-compose up
+
+ kibana can be accessed now in your web browser: http://localhost:5601
+
+What you have to do is to configure the ElasticSearch indices that can be displayed in Kibana.
+You can use the pattern filebeat-* to include all the logs coming from FileBeat.
+Now, all the logs from FileBeat, ElasticSearch, Kibana and any other containers can be visualized in the Kibana interface.
+
