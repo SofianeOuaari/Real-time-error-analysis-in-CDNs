@@ -19,12 +19,12 @@ class DataProvider:
         data_provider_id: int,
         path_data: str,
         kafka_topics: dict,
-        sampling_frequency: int
+        seconds_to_wait: int
     ) -> None:
         self.dp_id = data_provider_id
         self.path_data = path_data
         self.kafka_topics = kafka_topics
-        self.sampling_frequency = sampling_frequency
+        self.seconds_to_wait = seconds_to_wait
         self.kafka_helper = cdnt.kafka
         self.schema_helper = cdnt.schema.create_helper('ClientData')
 
@@ -57,7 +57,7 @@ class DataProvider:
                     self.kafka_topics['cdn_client_data_storage'],
                     rec
                 )
-                time.sleep(5)
+                time.sleep(self.seconds_to_wait)
             except:
                 cdnt.log.error(
                     f'Unexpected event occurred!: {traceback.format_exc()}'
