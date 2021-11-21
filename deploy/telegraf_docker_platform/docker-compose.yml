@@ -1,0 +1,11 @@
+version: '3.4'
+services:
+  docker_platform_metrics_loader:
+    image: ${CDN_REGISTRY}/telegraf:1.0.0
+    hostname: docker_platform_metrics_loader
+    container_name: cdn-docker_platform_metrics_loader
+    environment:
+      SERVICE_NAME: "docker_platform_metrics_loader"
+    restart: always
+    volumes:
+      - ${CDN_HOME}/deploy/telegraf_docker_platform/config/telegraf.conf:/etc/telegraf/telegraf.conf:ro
