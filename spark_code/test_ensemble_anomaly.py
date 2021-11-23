@@ -49,18 +49,6 @@ if __name__=="__main__":
     
     pd_df["pred"]=np.array(preds)
     
-    '''schema=StructType([StructField("timestamp",TimestampType()),
-                       StructField("channel_id",IntegerType()),
-    StructField("host_id",IntegerType()),
-    StructField("content_type",IntegerType()),
-    StructField("content_type",IntegerType()),
-    StructField("protocol",IntegerType()),
-    StructField("content_id",IntegerType()),
-    StructField("geo_location",IntegerType()),
-    StructField("user_id",IntegerType()),
-    StructField("pred",IntegerType())
-    ])'''
-    
     sparkDF=spark.createDataFrame(pd_df)
     print(sparkDF.printSchema())
     print(sparkDF.show())
