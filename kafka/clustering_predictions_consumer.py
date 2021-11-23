@@ -2,7 +2,6 @@ from json import dumps,loads
 from kafka import KafkaProducer
 from kafka import KafkaConsumer
 from elasticsearch import Elasticsearch
-import pymongo
 from time import sleep
 
 def json_serializer(data):
@@ -31,23 +30,14 @@ request_body = {
 es.indices.create(index='predictions',body=request_body)
 for index in es.indices.get('*'):
   print(index)
-client = pymongo.MongoClient("mongodb://localhost:27017/")
-db = client["prediction"]
-collection = db["prediction"]
 
-
-# print list of the _id values of the inserted documents:
 
 for message in consumer:
 
  print(f"{message.value}")
- 
-
  response = es.index(index = 'predictions',document = message.value)
  print(response)
  customers_list = [message.value]
- x = collection.insert_many(customers_list)
- print(x.inserted_ids)
 
 
 
