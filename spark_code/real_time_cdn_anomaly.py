@@ -43,12 +43,6 @@ if __name__ == "__main__":
     for col_name in features:
         json_df = json_df.withColumn(col_name, col(col_name).cast('int'))
 
-    '''df=json_df.writeStream.outputMode("complete").format("json").option("checkpointLocation", "checkpoints").start()
-    print(type(df))
-    print(df)   
-    time.sleep(10)
-    df.stop()'''
-    #pd_df=df.toPandas().fillna(-1)
     
     def predict(row):
         features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
@@ -70,7 +64,7 @@ if __name__ == "__main__":
                 preds.append(0)
         
         p["pred"]=np.array(preds)
-        result = {'timestamp': d['timestamp'], 'prediction': preds[0]}
+        result = {'timestamp': d['timestamp'], 'prediction': preds[0]} 
         return str(json.dumps(result))
     
     
@@ -80,21 +74,10 @@ if __name__ == "__main__":
     schema =StructType([StructField("timestamp",StringType()),
                        StructField("prediction",IntegerType())])
     df_prediction = df_prediction.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
-    #json_df = df_prediction.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
-
-    '''df_prediction = df_prediction.drop(*["features"])'''
-    #df_prediction.writeStream.outputMode("append").format("console").option("truncate", "false").start()
-
-    '''df_prediction.selectExpr("timestamp AS key", "to_json(struct(*)) AS value") \
-        .writeStream \
-        .format("kafka") \
-        .outputMode("append") \
-        .option("kafka.bootstrap.servers", "localhost:9092") \
-        .option("topic", "cdn_result") \
-        .option("checkpointLocation", "checkpoints") \
-        .start() \
-        .awaitTermination()'''
         
     df_prediction.selectExpr("timestamp AS key", "to_json(struct(*)) AS value").writeStream.format("kafka").outputMode("append").option("kafka.bootstrap.servers", "localhost:9092") \
   .option("topic", "cdn_result") \
   .option("checkpointLocation", "checkpoints").start().awaitTermination()
+  
+  
+  # Schemas CDN*json
