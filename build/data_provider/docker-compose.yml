@@ -6,6 +6,6 @@ services:
     image: ${CDN_REGISTRY}/data_provider:1.0.0
     build:
       context: ${CDN_HOME}/
-      dockerfile: /build/data_provider/Dockerfile
+      dockerfile: build/data_provider/Dockerfile
       args:
         CDN_REGISTRY: ${CDN_REGISTRY}

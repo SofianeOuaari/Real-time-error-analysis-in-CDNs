@@ -4,7 +4,7 @@ services:
   burrow:
     image: ${CDN_REGISTRY}/burrow:1.0.0
     build:
-      context: ${CDN_HOME}/source/Burrow
-      dockerfile: ${CDN_HOME}/build/burrow/Dockerfile
+      context: ${CDN_HOME}
+      dockerfile: build/burrow/Dockerfile
       args:
         CDN_REGISTRY: ${CDN_REGISTRY}
