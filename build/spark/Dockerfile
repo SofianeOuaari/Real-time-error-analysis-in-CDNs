@@ -1,3 +1,5 @@
+ARG CDN_HOME
+
 # Base image to start from.
 FROM ubuntu:20.04
 
@@ -51,11 +53,11 @@ EXPOSE 4040 6066 7077 8080
 WORKDIR $SPARK_HOME
 
 # Copy files
-COPY log4j.properties $SPARK_HOME/conf
-COPY data $SPARK_HOME/data
-COPY spark_code $SPARK_HOME/spark_code
-COPY models $SPARK_HOME/models
-COPY requirements.txt $SPARK_HOME/requirements.txt
+COPY ${CDN_HOME}/build/spark/log4j.properties $SPARK_HOME/conf
+COPY ${CDN_HOME}/source/data $SPARK_HOME/data
+COPY ${CDN_HOME}/source/spark/ $SPARK_HOME/spark_code
+COPY ${CDN_HOME}/source/spark/models $SPARK_HOME/models
+COPY ${CDN_HOME}/build/spark/requirements.txt $SPARK_HOME/requirements.txt
 
 RUN pip3 install -r requirements.txt
 

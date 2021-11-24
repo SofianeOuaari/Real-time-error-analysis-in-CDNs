@@ -1,0 +1,11 @@
+---
+version: '3.4'
+services:
+  # 1.0.0 - Initial version of cdn spark
+  spark:
+    image: ${CDN_REGISTRY}/cdn_spark:1.0.0
+    build:
+      context: ${CDN_HOME}/
+      dockerfile: ${CDN_HOME}/build/spark/Dockerfile
+      args:
+        CDN_REGISTRY: ${CDN_REGISTRY}
