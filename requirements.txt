@@ -5,3 +5,5 @@ pandas
 pyspark
 findspark
 elasticsearch
+influxdb
+influxdb_client
