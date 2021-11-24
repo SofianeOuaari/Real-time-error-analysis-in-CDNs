@@ -40,7 +40,7 @@ def main():
 
     try:
         line = next(rdr, None)
-        channel_id,timestamp,host_id,content_type,protocol,content_id,geo_location,user_id = line[0],line[1],line[2],line[3],line[4],line[5],line[6],line[7]
+        channel_id,timestamp,host_id,content_type,protocol,content_id,geo_location,user_id = line[1],line[0],line[2],line[3],line[4],line[5],line[6],line[7]
         # Convert csv columns to key value pair
         result = {"channel_id":channel_id,"timestamp":timestamp,"host_id":host_id,"content_type":content_type,"protocol":protocol,"content_id":content_id,"geo_location":geo_location,"user_id":user_id}
         # Convert dict to json as message format
@@ -58,12 +58,12 @@ def main():
         try:
             line = next(rdr, None)
             d1 = parse(timestamp)
-            d2 = parse(line[1])
+            d2 = parse(line[0])
             diff = ((d2 - d1).total_seconds())/args.speed
             if(diff<0): diff=0
             print("Next message in ", diff, " seconds")
             time.sleep(diff)
-            channel_id,timestamp,host_id,content_type,protocol,content_id,geo_location,user_id = line[0],line[1],line[2],line[3],line[4],line[5],line[6],line[7]
+            channel_id,timestamp,host_id,content_type,protocol,content_id,geo_location,user_id = line[1],line[0],line[2],line[3],line[4],line[5],line[6],line[7]
             result = {"channel_id":channel_id,"timestamp":timestamp,"host_id":host_id,"content_type":content_type,"protocol":protocol,"content_id":content_id,"geo_location":geo_location,"user_id":user_id}
             jresult = dumps(result)
 
