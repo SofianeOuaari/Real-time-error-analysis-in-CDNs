@@ -1,5 +1,9 @@
 # HBase
+![Hbase Architecture](https://ndu0e1pobsf1dobtvj5nls3q-wpengine.netdna-ssl.com/wp-content/uploads/2019/08/Apache-HBase-MOB-Architecture.png)
 
+HBase Architecture
+
+Image source: https://blog.cloudera.com/introducing-apache-hbase-medium-object-storage-mob-compaction-partition-policies/
 ## Creating The HBase environment:
 
         docker-compose up -d
