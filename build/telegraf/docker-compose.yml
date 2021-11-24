@@ -4,7 +4,7 @@ services:
   telegraf:
     image: ${CDN_REGISTRY}/telegraf:1.0.0
     build:
-      context: .
-      dockerfile: ${CDN_HOME}/build/telegraf/Dockerfile
+      context: ${CDN_HOME}
+      dockerfile: build/telegraf/Dockerfile
       args:
         CDN_REGISTRY: ${CDN_REGISTRY}
