@@ -3,7 +3,7 @@ version: '2'
 
 services:
   influxdb:
-    image: influxdb:1.8.0
+    image: influxdb:latest
     container_name: cdn-influxdb
     hostname: cdn-influxdb
     restart: always

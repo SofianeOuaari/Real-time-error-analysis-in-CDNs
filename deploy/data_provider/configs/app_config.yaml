@@ -4,6 +4,6 @@ data_provider:
     - 'data'
     - 'cdn_client_error.csv'
   kafka_topics:
-    cdn_ml_model_input: 'cdn_ml_model_input'
+    cdn_ml_model_input: 'cdn_data'
     cdn_client_data_storage: 'cdn_client_data_storage'
   seconds_to_wait: 1

@@ -10,14 +10,13 @@ def json_serializer(data):
 print("Connecting to consumer ...")
 es = Elasticsearch([ "localhost:9200"])
 consumer = KafkaConsumer(
-        'cdn_result',
+        'spark_result',
      bootstrap_servers=['localhost:9092'],
      auto_offset_reset='earliest',
      enable_auto_commit=True,
-     group_id='cdn-group',
+     group_id='pxl-group',
      value_deserializer=lambda x: loads(x.decode('utf-8')))
 producer_elk = KafkaProducer(bootstrap_servers=['localhost:9092'], value_serializer=lambda x: dumps(x).encode('utf-8'))
-
 if "predictions" in es.indices.get('*'):
     es.indices.delete("predictions")
 
@@ -30,14 +29,14 @@ request_body = {
 es.indices.create(index='predictions',body=request_body)
 for index in es.indices.get('*'):
   print(index)
-
-
 for message in consumer:
 
  print(f"{message.value}")
+
  response = es.index(index = 'predictions',document = message.value)
  print(response)
- customers_list = [message.value]
+ sleep(2)
+ producer_elk.send('elk_predictions',value=message.value)
 
 
 

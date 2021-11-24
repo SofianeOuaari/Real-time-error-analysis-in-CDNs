@@ -1,1 +1,1 @@
-docker run -d --name=grafana -p 3000:3000 grafana/grafana:7.5.6-ubuntu
+docker run -d --name=grafana -p 3000:3000 grafana/grafana:latest-ubuntu
