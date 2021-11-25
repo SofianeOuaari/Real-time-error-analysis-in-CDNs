@@ -64,18 +64,18 @@ if __name__ == "__main__":
                 preds.append(0)
         
         p["pred"]=np.array(preds)
-        result = {'timestamp': d['timestamp'], 'prediction': preds[0]} 
+        result = {'prediction_timestamp': d['timestamp'], 'prediction': preds[0]} 
         return str(json.dumps(result))
     
     
     score_udf = udf(predict, StringType())    
     df_prediction = string_df.select(score_udf("value").alias("value"))
         
-    schema =StructType([StructField("timestamp",StringType()),
+    schema =StructType([StructField("prediction_timestamp",StringType()),
                        StructField("prediction",IntegerType())])
     df_prediction = df_prediction.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
         
-    df_prediction.selectExpr("timestamp AS key", "to_json(struct(*)) AS value").writeStream.format("kafka").outputMode("append").option("kafka.bootstrap.servers", "localhost:9092") \
+    df_prediction.selectExpr("prediction_timestamp AS key", "to_json(struct(*)) AS value").writeStream.format("kafka").outputMode("append").option("kafka.bootstrap.servers", "localhost:9092") \
   .option("topic", "cdn_result") \
   .option("checkpointLocation", "checkpoints").start().awaitTermination()
   
