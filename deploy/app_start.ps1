@@ -5,13 +5,13 @@ $Env:CDN_HOME = Split-Path -Path $curDir -Parent
 Write-Host "Done";
 Write-Host "Deploying the docker containers...";
 
-$subfolders = Get-ChildItem -Path ./ -Recurse -Directory -Force -ErrorAction SilentlyContinue | Select-Object FullName 
+$subfolders = Get-ChildItem -Path ./ -Recurse -Depth 1 -Directory -Force -ErrorAction SilentlyContinue | Select-Object FullName 
 Foreach ($i in $subfolders)
 
 {
 	cd $i.FullName
 	docker-compose up -d
 }
-cd ../
+cd $Env:CDN_HOME
 docker run -d --name=grafana -p 3000:3000 grafana/grafana:latest-ubuntu
 Write-Host "Complete";

@@ -1,7 +1,13 @@
-version: "2"
+version: '3.4'
 services:
   burrow:
-    build: .
+    image: ${CDN_REGISTRY}/burrow:1.0.0
+    build:
+      context: ${CDN_HOME}
+      dockerfile: /build/burrow/Dockerfile
+      args:
+        CDN_REGISTRY: ${CDN_REGISTRY}
+    container_name: cdn-burrow
     volumes:
       - ./docker-config:/etc/burrow/
       - ./tmp:/var/tmp/burrow
@@ -11,18 +17,60 @@ services:
       - zookeeper
       - kafka
     restart: always
-
+    
   zookeeper:
-    image: wurstmeister/zookeeper
+    hostname: kafka-zookeeper
+    container_name: cdn-kafka_zookeeper
+    restart: always
+    image: confluentinc/cp-zookeeper:latest
     ports:
-      - 2181:2181
+      - 2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: wurstmeister/kafka
+    # "`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-
+    # An important note about accessing Kafka from clients on other machines:
+    # -----------------------------------------------------------------------
+    #
+    # The config used here exposes port 9092 for _external_ connections to the broker
+    # i.e. those from _outside_ the docker network. This could be from the host machine
+    # running docker, or maybe further afield if you've got a more complicated setup.
+    # If the latter is true, you will need to change the value 'localhost' in
+    # KAFKA_ADVERTISED_LISTENERS to one that is resolvable to the docker host from those
+    # remote clients
+    #
+    # For connections _internal_ to the docker network, such as from other services
+    # and components, use kafka:29092.
+    #
+    # See https://rmoff.net/2018/08/02/kafka-listeners-explained/ for details
+    # "`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-
+    #
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka_broker
+    container_name: cdn-kafka_broker
+    restart: always
+    depends_on:
+      - zookeeper
     ports:
       - 9092:9092
     environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181/local
-      KAFKA_ADVERTISED_HOST_NAME: kafka
-      KAFKA_ADVERTISED_PORT: 9092
-      KAFKA_CREATE_TOPICS: "test-topic:2:1,test-topic2:1:1,test-topic3:1:1"
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://192.168.1.105:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  burrow_kafka_metrics_loader:
+    image: ${CDN_REGISTRY}/telegraf:1.0.0
+    hostname: burrow_kafka_metrics_loader
+    container_name: cdn-burrow_kafka_metrics_loader
+    environment:
+      SERVICE_NAME: "burrow_kafka_metrics_loader"
+    restart: always
+    volumes:
+      - ${CDN_HOME}/deploy/burrow/config/telegraf_config/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    depends_on:
+      - burrow
