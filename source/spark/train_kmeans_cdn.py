@@ -30,7 +30,7 @@ if __name__=="__main__":
     
     model_1.fit(df_train_ohe)
 
-    model_1_path_name="models/svm.pickle"
+    model_1_path_name="models/kmeans_7.pickle"
     encoder_path_name="processing_obj/ohe.pickle"
     
     dump(model_1,model_1_path_name)
