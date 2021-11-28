@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     json_df = string_df.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
     
-    df_train_dbscan=pd.read_csv("../data/train_cdn.csv").iloc[:1000]
+    
 
     # Print out the dataframe schema
     features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
@@ -48,10 +48,11 @@ if __name__ == "__main__":
         json_df = json_df.withColumn(col_name, col(col_name).cast('int'))
 
     
-    def predict(row,df_train_dbscan):
+    def predict(row):
         features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
         model_svm=joblib.load("models/svm.pickle")
         model_iforest=joblib.load("models/iforest.pickle")
+        df_train_dbscan=pd.read_csv("../data/train_cdn.csv").iloc[:1000]
         df_train_dbscan_fea=df_train_dbscan[features].fillna(-1)
         model_dbscan=DBSCAN()
         
