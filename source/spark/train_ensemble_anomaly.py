@@ -24,7 +24,7 @@ if __name__=="__main__":
     
     clustering_features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
     
-    df_train=pd.read_csv("data/train_cdn.csv")
+    df_train=pd.read_csv("../data/train_cdn.csv")
     df_train=df_train.fillna(-1)
     model_1.fit(df_train[clustering_features].iloc[:1000])
     model_2.fit(df_train[clustering_features].iloc[:1000])

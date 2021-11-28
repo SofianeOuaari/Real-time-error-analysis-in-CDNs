@@ -1,0 +1,11 @@
+kafka-python
+argparse
+numpy
+pandas
+pyspark
+findspark
+elasticsearch
+influxdb
+influxdb_client
+scikit-learn
+joblib
