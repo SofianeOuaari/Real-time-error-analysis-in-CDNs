@@ -19,7 +19,7 @@ linters-settings:
   misspell:
     locale: US
   goimports:
-    local-prefixes: github.com/linkedin/burrow
+    local-prefixes: github.com/linkedin/Burrow
   gocritic:
     enabled-tags:
       - diagnostic

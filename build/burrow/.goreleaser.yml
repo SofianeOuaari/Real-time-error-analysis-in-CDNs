@@ -1,4 +1,4 @@
-project_name: burrow
+project_name: Burrow
 
 builds:
 - main: main.go
@@ -40,5 +40,5 @@ dockers:
   - "--label=org.label-schema.schema-version=1.0"
   - "--label=org.label-schema.version={{ .Version }}"
   - "--label=org.label-schema.name={{ .ProjectName }}"
-  - "--label=org.label-schema.vcs=https://github.com/linkedin/burrow"
+  - "--label=org.label-schema.vcs=https://github.com/linkedin/Burrow"
   - "--label=org.label-schema.vcs-ref={{ .FullCommit }}"
