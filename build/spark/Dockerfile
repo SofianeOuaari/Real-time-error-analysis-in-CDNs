@@ -57,6 +57,7 @@ COPY ${CDN_HOME}/build/spark/log4j.properties $SPARK_HOME/conf
 COPY ${CDN_HOME}/source/data $SPARK_HOME/data
 COPY ${CDN_HOME}/source/spark/ $SPARK_HOME/spark_code
 COPY ${CDN_HOME}/source/spark/models $SPARK_HOME/models
+COPY ${CDN_HOME}/source/spark/processing_obj $SPARK_HOME/processing_obj
 COPY ${CDN_HOME}/build/spark/requirements.txt $SPARK_HOME/requirements.txt
 
 RUN pip3 install -r requirements.txt
