@@ -11,12 +11,12 @@ import gower
 def dbscan_prediction(test_data):
     model_4_path_name = "models/dbscan_with_gower.pickle"
     df_dbscan = pd.read_csv(test_data)
-    df_dbscan = df_dbscan.drop(columns=['timestamp', 'content_id']).fillna(df_dbscan.drop(columns=['timestamp', 'content_id']).mean())
+    df_dbscan = df_dbscan.drop(columns=['timestamp'])
+    df_dbscan = df_dbscan.fillna(-1)
     data=df_dbscan[:10000]
-    gower_mat = gower.gower_matrix(data,  cat_features = [True,True ,True,True, True,True,True,True])
+    gower_mat = gower.gower_matrix(data, cat_features = [True,True ,True,True, True,True,True])
     model_4 = DBSCAN(min_samples=5, eps=0.3,metric = "precomputed").fit(gower_mat)
-    dump(model_4, model_4_path_name)
-    
+    dump(model_4, model_4_path_name)    
 
 if __name__=="__main__":
     spark=SparkSession.builder.appName("Real Anomaly Ensemble Prediction").getOrCreate()
@@ -38,9 +38,7 @@ if __name__=="__main__":
     dbscan_prediction("../data/test_cdn.csv")
     model_dbscan_with_gower = joblib.load("models/dbscan_with_gower.pickle")
 
-    pred_4=model_dbscan.labels_
-
-    
+    pred_4=model_dbscan.labels_  
     data["pred"]=np.array(pred_4)
     
     sparkDF=spark.createDataFrame(data)

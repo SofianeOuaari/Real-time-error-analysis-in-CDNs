@@ -3,6 +3,7 @@ from pyspark.sql.session import SparkSession
 from pyspark.sql.functions import explode, split, col, from_json,udf
 from pyspark.sql.types import StructType, StructField, StringType, TimestampType, FloatType,IntegerType
 from sklearn.cluster import DBSCAN
+import gower
 import pandas as pd
 import numpy as np
 import json
@@ -44,21 +45,19 @@ if __name__ == "__main__":
         json_df = json_df.withColumn(col_name, col(col_name).cast('int'))
     
     
-
     
     def predict(row):
         features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
-        model_kmeans=joblib.load("models/kmeans_7.pickle")
-        encoder=joblib.load("processing_obj/ohe.pickle")
+        model=joblib.load("models/dbscan_with_gower.pickle")
         
         d = json.loads(row)
         p = pd.DataFrame.from_dict(d, orient = "index").transpose()
         p = p.replace(r'^\s*$', np.NaN, regex=True)
         p=p.fillna(-1)
         p[features]=p[features].astype(float)
-        preds=model_kmeans.predict(encoder.transform(p[features]))
+        gower_mat = gower.gower_matrix(p,  cat_features = [True,True ,True,True, True,True,True])
+        preds=model.fit_predict(gower_mat)
         p["pred"]=np.array(preds)
-        #result = {'prediction_ID':uuid.uuid4().int & (1<<64)-1,'prediction_timestamp': d['timestamp'], 'prediction': preds[0]} 
         result = {'prediction_timestamp': d['timestamp'], 'prediction': preds[0]} 
         return str(json.dumps(result))
     

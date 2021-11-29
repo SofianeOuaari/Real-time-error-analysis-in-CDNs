@@ -22,8 +22,8 @@ if __name__=="__main__":
     df_train=pd.read_csv("../data/train_cdn.csv")
     df_train=df_train.fillna(-1)
     data=df[:10000]
-    gower_mat = gower.gower_matrix(data,  cat_features = [True,True ,True,True, True,True,True,True])
-    model = DBSCAN(eps=0.3,min_samples=5,metric = "precomputed").fit(gower_mat)
+    gower_mat = gower.gower_matrix(data,  cat_features = [True,True ,True,True, True,True,True])
+    model_4 = DBSCAN(eps=0.3,min_samples=5,metric = "precomputed").fit(gower_mat)
     
-    model_path_name="models/dbscan_with_gower.pickle"
-    dump(model,model_path_name)    
+    model_4_path_name="models/dbscan_with_gower.pickle"
+    dump(model_4,model_4_path_name)    
