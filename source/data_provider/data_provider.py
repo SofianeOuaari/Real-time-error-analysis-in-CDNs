@@ -3,6 +3,7 @@ import json
 import time
 import datetime
 import traceback
+import uuid
 from dateutil import parser
 
 import pandas as pd
@@ -35,14 +36,13 @@ class DataProvider:
         :return:
         """
         df = pd.read_csv(os.path.join(self.base_path, *self.path_data))
+        df['sample_id'] = [str(uuid.uuid4()) for i in range(len(df))]
         df['timestamp'] = df['timestamp'].apply(lambda x: parser.parse(x))
         df.sort_values('timestamp', inplace=True)
         df.reset_index(drop=True, inplace=True)
         df['timestamp'] = df['timestamp'].apply(lambda x: str(x))
         df.fillna(value=-1, inplace=True)
         records = df.to_dict('records')
-
-        # TODO publishing frequency simulation
 
         for i, rec in enumerate(records):
             try:
