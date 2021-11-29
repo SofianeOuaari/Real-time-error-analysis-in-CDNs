@@ -24,7 +24,7 @@ if __name__ == "__main__":
     string_df = df.selectExpr("CAST(value AS STRING)")
     print(string_df)
 
-    schema =StructType([StructField("sampleID",StringType()),StructField("timestamp",TimestampType()),
+    schema =StructType([StructField("sample_id",StringType()),StructField("timestamp",TimestampType()),
                        StructField("channel_id",IntegerType()),
     StructField("host_id",IntegerType()),
     StructField("content_type",IntegerType()),
@@ -64,14 +64,14 @@ if __name__ == "__main__":
                 preds.append(0)
         
         p["pred"]=np.array(preds)
-        result = {'sampleID':d['sampleID'],'prediction_timestamp': d['timestamp'], 'prediction': preds[0]} 
+        result = {'sample_id':d['sample_id'],'prediction_timestamp': d['timestamp'], 'prediction': preds[0]} 
         return str(json.dumps(result))
     
     
     score_udf = udf(predict, StringType())    
     df_prediction = string_df.select(score_udf("value").alias("value"))
         
-    schema =StructType([StructField("sampleID",StringType()),
+    schema =StructType([StructField("sample_id",StringType()),
                         StructField("prediction_timestamp",StringType()),
                        StructField("prediction",IntegerType())])
     df_prediction = df_prediction.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
