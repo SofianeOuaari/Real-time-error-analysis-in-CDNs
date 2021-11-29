@@ -34,21 +34,21 @@ if __name__=="__main__":
     
     features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
 
-    dbscan_prediction("../data/test_cdn.csv")
+    #dbscan_prediction("../data/test_cdn.csv")
     model_svm = joblib.load("models/svm.pickle")
     model_iforest = joblib.load("models/iforest.pickle")
     model_hdbscan = joblib.load("models/hdbscan.pickle")
-    model_dbscan = joblib.load("models/dbscan.pickle")
+    #model_dbscan = joblib.load("models/dbscan.pickle")
 
     pred_1=model_svm.predict(pd_df[features])
     pred_2=model_iforest.predict(pd_df[features])
     pred_3, _ = hdbscan.approximate_predict(model_hdbscan, pd_df[features])
-    pred_4=model_dbscan.labels_
+    #pred_4=model_dbscan.labels_
 
     preds=[]
     
-    for p_1,p_2,p_3,p_4 in zip(pred_1,pred_2,pred_3, pred_4):
-        if p_1==-1 and p_2==-1 and p_3==-1 and p_4==-1:
+    for p_1,p_2,p_3 in zip(pred_1,pred_2,pred_3):
+        if p_1==-1 and p_2==-1 and p_3==-1:
             preds.append(1)
         else:
             preds.append(0)
