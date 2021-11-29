@@ -1,14 +1,11 @@
-import pyspark
 from pyspark.sql.session import SparkSession
-from pyspark.sql.functions import explode, split, col, from_json,udf
+from pyspark.sql.functions import col, from_json,udf
 from pyspark.sql.types import StructType, StructField, StringType, TimestampType, FloatType,IntegerType
-from pyspark.ml.clustering import KMeansModel
-from pyspark.ml.feature import VectorAssembler
 import pandas as pd
 import numpy as np
 import json
 import joblib
-import time
+import hdbscan
 
 if __name__ == "__main__":
     spark = SparkSession \
@@ -48,6 +45,7 @@ if __name__ == "__main__":
         features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
         model_svm=joblib.load("models/svm.pickle")
         model_iforest=joblib.load("models/iforest.pickle")
+        model_hdbscan = joblib.load("models/hdbscan.pickle")
         
         d = json.loads(row)
         p = pd.DataFrame.from_dict(d, orient = "index").transpose()
@@ -56,9 +54,11 @@ if __name__ == "__main__":
         p[features]=p[features].astype(float)
         pred_1=model_svm.predict(p[features].astype(float))
         pred_2=model_iforest.predict(p[features]).astype(float)
+        pred_3 = hdbscan.approximate_predict(model_hdbscan, p[features])[0][0].astype(float)
+
         preds=[]
-        for p_1,p_2 in zip(pred_1,pred_2):
-            if p_1==-1 and p_2==-1: 
+        for p_1,p_2,p_3 in zip(pred_1,pred_2,pred_3):
+            if p_1==-1 and p_2==-1 and p_3==-1:
                 preds.append(1)
             else: 
                 preds.append(0)

@@ -18,6 +18,7 @@ RUN apt-get update \
 # Install Python
 FROM python:3.9-slim
 RUN pip install --no-cache-dir matplotlib pandas numpy sklearn
+
 # Install Java
 RUN apt-get update \
  && apt-get install -y openjdk-11-jre \
@@ -35,6 +36,7 @@ RUN apt-get clean
 #RUN apk update
 #RUN apk add
 RUN apt-get update -y \
+ && apt install -y build-essential \
  && apt-get install -y curl \
  && curl https://archive.apache.org/dist/spark/spark-3.2.0/spark-3.2.0-bin-hadoop2.7.tgz -o spark.tgz \
  && tar -xf spark.tgz \
