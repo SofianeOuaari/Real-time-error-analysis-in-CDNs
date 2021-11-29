@@ -2,7 +2,7 @@ data_provider:
   data_provider_id: 1
   path_data:
     - 'data'
-    - 'cdn_client_error.csv'
+    - 'test_cdn.csv'
   kafka_topics:
     cdn_ml_model_input: 'cdn_data'
     cdn_client_data_storage: 'cdn_client_data_storage'
