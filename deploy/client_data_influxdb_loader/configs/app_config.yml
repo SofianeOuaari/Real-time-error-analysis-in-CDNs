@@ -16,6 +16,7 @@ CDNInfluxDBLoader:
           - host_id
         time: timestamp
         fields:
+          - sample_id
           - channel_id
           - content_type
           - content_id
