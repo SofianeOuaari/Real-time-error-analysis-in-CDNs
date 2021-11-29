@@ -7,3 +7,4 @@ findspark
 elasticsearch
 influxdb
 influxdb_client
+hdbscan

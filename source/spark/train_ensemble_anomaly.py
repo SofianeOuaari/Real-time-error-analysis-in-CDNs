@@ -1,13 +1,9 @@
-import numpy as np 
-import pandas as pd 
+import pandas as pd
 from sklearn.svm import OneClassSVM
 from sklearn.ensemble import IsolationForest 
 from sklearn.cluster import DBSCAN
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType,StructField,StringType,TimestampType,FloatType
-from pyspark.ml.clustering import KMeans
-from pyspark.ml.feature import VectorAssembler
-from pyspark.ml import Pipeline
+import hdbscan
 from joblib import dump
 
 
@@ -15,10 +11,11 @@ from joblib import dump
 
 if __name__=="__main__":
     
-    model_1=OneClassSVM()
-    model_2= IsolationForest()
-    #model_3=DBSCAN()
-    
+    model_1 = OneClassSVM()
+    model_2 = IsolationForest()
+    model_3 = hdbscan.HDBSCAN(metric="hamming", min_samples=2000, cluster_selection_epsilon=0.5, prediction_data=True)
+    #model_4=DBSCAN()
+
     spark =SparkSession.builder.appName("Create Ensemble Anomaly Detector").getOrCreate()
     
     
@@ -28,14 +25,11 @@ if __name__=="__main__":
     df_train=df_train.fillna(-1)
     model_1.fit(df_train[clustering_features].iloc[:1000])
     model_2.fit(df_train[clustering_features].iloc[:1000])
+    model_3.fit(df_train[clustering_features])
     model_1_path_name="models/svm.pickle"
     model_2_path_name="models/iforest.pickle"
+    model_3_path_name = "models/hdbscan.pickle"
     
     dump(model_1,model_1_path_name)
     dump(model_2,model_2_path_name)
-    
-    
-
-
-
-    
+    dump(model_3, model_3_path_name)
