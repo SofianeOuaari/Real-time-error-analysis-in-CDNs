@@ -1,11 +1,12 @@
 import numpy as np 
 import pandas as pd 
-from sklearn.cluster import DBSCAN
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType,StructField,StringType,TimestampType,FloatType
 from pyspark.ml import Pipeline
 from joblib import dump
 import gower
+from sklearn_extra.cluster import KMedoids
+
 
 
 
@@ -14,7 +15,7 @@ import gower
 if __name__=="__main__":
     
     
-    spark =SparkSession.builder.appName("Create DBSCAN with gower").getOrCreate()
+    spark =SparkSession.builder.appName("Create Kmedoids with gower").getOrCreate()
     
     
     clustering_features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
@@ -23,7 +24,7 @@ if __name__=="__main__":
     df_train=df_train.fillna(-1)
     data=df_train[:10000]
     gower_mat = gower.gower_matrix(data,  cat_features = [True,False,True ,True,True, True,True,True])
-    model_4 = DBSCAN(n_jobs=-1,eps=0.2,min_samples=50,metric = "precomputed").fit(gower_mat)
+    model_5 = KMedoids(n_clusters = 6, random_state = 0, metric = 'precomputed', method = 'pam', init =  'k-medoids++').fit(gower_mat)
     
-    model_4_path_name="models/dbscan_with_gower.pickle"
-    dump(model_4,model_4_path_name)    
+    model_5_path_name="models/kmedoids.pickle"
+    dump(model_5,model_5_path_name)    
