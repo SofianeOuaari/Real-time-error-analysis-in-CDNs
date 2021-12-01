@@ -46,13 +46,15 @@ if __name__ == "__main__":
         model_svm=joblib.load("models/svm.pickle")
         model_iforest=joblib.load("models/iforest.pickle")
         model_hdbscan = joblib.load("models/hdbscan.pickle")
+        encoder=joblib.load("processing_obj/ohe.pickle")
         
         d = json.loads(row)
         p = pd.DataFrame.from_dict(d, orient = "index").transpose()
         p = p.replace(r'^\s*$', np.NaN, regex=True)
         p=p.fillna(-1)
         p[features]=p[features].astype(float)
-        pred_1=model_svm.predict(p[features].astype(float))
+        #pred_1=model_svm.predict(p[features].astype(float))
+        pred_1=model_svm.predict(encoder.transform(p[features]))
         pred_2=model_iforest.predict(p[features]).astype(float)
         pred_3 = hdbscan.approximate_predict(model_hdbscan, p[features])[0][0].astype(float)
 

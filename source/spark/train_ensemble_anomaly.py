@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.svm import OneClassSVM
 from sklearn.ensemble import IsolationForest 
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.cluster import DBSCAN
 from pyspark.sql import SparkSession
 import hdbscan
@@ -24,13 +25,24 @@ if __name__=="__main__":
     df_train=pd.read_csv("./data/train_cdn.csv")
     df_train=df_train.fillna(-1)
     print("Models training in progress, please wait a few minutes...")
-    model_1.fit(df_train[clustering_features].iloc[:1000])
-    model_2.fit(df_train[clustering_features].iloc[:1000])
-    model_3.fit(df_train[clustering_features])
+    
+    encoder=OneHotEncoder()
+    df_train_ohe=encoder.fit_transform(df_train.iloc[:10000])
+    
+    model_1.fit(df_train_ohe)
+    model_2.fit(df_train[clustering_features].iloc[:10000])
+    model_3.fit(df_train[clustering_features].iloc[:10000])
+    
+    
+    
     model_1_path_name="models/svm.pickle"
     model_2_path_name="models/iforest.pickle"
     model_3_path_name = "models/hdbscan.pickle"
+    encoder_path_name="processing_obj/ohe.pickle"
+    
     
     dump(model_1,model_1_path_name)
     dump(model_2,model_2_path_name)
     dump(model_3, model_3_path_name)
+    dump(encoder,encoder_path_name)
+    
