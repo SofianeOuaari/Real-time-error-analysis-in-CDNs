@@ -21,7 +21,7 @@ if __name__=="__main__":
     
     df_train=pd.read_csv("./data/train_cdn.csv")
     df_train=df_train.fillna(-1)
-    data=df[:10000]
+    data=df_train[:10000]
     gower_mat = gower.gower_matrix(data,  cat_features = [True,True ,True,True, True,True,True])
     model_4 = DBSCAN(eps=0.2,min_samples=50,metric = "precomputed").fit(gower_mat)
     
