@@ -13,7 +13,7 @@ from joblib import dump
 if __name__=="__main__":
     
     model_1 = OneClassSVM()
-    model_2 = IsolationForest()
+    model_2 = IsolationForest(n_jobs=-1)
     model_3 = hdbscan.HDBSCAN(metric="hamming", min_samples=2000, cluster_selection_epsilon=0.5, prediction_data=True)
     #model_4=DBSCAN()
 
