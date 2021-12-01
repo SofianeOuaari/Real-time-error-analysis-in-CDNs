@@ -21,7 +21,7 @@ if __name__=="__main__":
     
     clustering_features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
     
-    df_train=pd.read_csv("../data/train_cdn.csv")
+    df_train=pd.read_csv("./data/train_cdn.csv")
     df_train=df_train.fillna(-1)
     encoder=OneHotEncoder()
     df_train_ohe=encoder.fit_transform(df_train.iloc[:1000])

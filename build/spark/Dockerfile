@@ -65,4 +65,8 @@ COPY ${CDN_HOME}/build/spark/requirements.txt $SPARK_HOME/requirements.txt
 RUN pip3 install -r requirements.txt
 
 # Run commands
+ADD ${CDN_HOME}/build/spark/entrypoint.sh ${SPARK_HOME}
+RUN chmod +x ${SPARK_HOME}/entrypoint.sh
+
+ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]
 CMD ["bin/spark-class", "org.apache.spark.deploy.master.Master", "org.apache.spark.deploy.worker.Worker"]

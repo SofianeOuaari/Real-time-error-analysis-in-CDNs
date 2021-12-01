@@ -19,7 +19,7 @@ if __name__=="__main__":
     
     clustering_features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
     
-    df_train=pd.read_csv("../data/train_cdn.csv")
+    df_train=pd.read_csv("./data/train_cdn.csv")
     df_train=df_train.fillna(-1)
     data=df[:10000]
     gower_mat = gower.gower_matrix(data,  cat_features = [True,True ,True,True, True,True,True])

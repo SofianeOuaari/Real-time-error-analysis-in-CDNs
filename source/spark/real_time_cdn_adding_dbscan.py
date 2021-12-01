@@ -2,15 +2,11 @@ import pyspark
 from pyspark.sql.session import SparkSession
 from pyspark.sql.functions import explode, split, col, from_json,udf
 from pyspark.sql.types import StructType, StructField, StringType, TimestampType, FloatType,IntegerType
-from pyspark.ml.clustering import KMeansModel
-from pyspark.ml.feature import VectorAssembler
 import pandas as pd
 import numpy as np
 from sklearn.cluster import DBSCAN
 import json
 import joblib
-import time
-import uuid
 
 if __name__ == "__main__":
     spark = SparkSession \
@@ -52,7 +48,7 @@ if __name__ == "__main__":
         features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
         model_svm=joblib.load("models/svm.pickle")
         model_iforest=joblib.load("models/iforest.pickle")
-        df_train_dbscan=pd.read_csv("../data/train_cdn.csv").iloc[:1000]
+        df_train_dbscan=pd.read_csv("./data/train_cdn.csv").iloc[:1000]
         df_train_dbscan_fea=df_train_dbscan[features].fillna(-1)
         model_dbscan=DBSCAN()
         
