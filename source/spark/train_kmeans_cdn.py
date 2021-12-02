@@ -1,13 +1,7 @@
-import numpy as np 
-import pandas as pd 
-from sklearn.svm import OneClassSVM
-from sklearn.ensemble import IsolationForest
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.cluster import KMeans
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType,StructField,StringType,TimestampType,FloatType
-from pyspark.ml.feature import VectorAssembler
-from pyspark.ml import Pipeline
+from pyspark.sql.types import StructType,StructField,IntegerType,TimestampType
 from joblib import dump
 
 
@@ -17,12 +11,20 @@ if __name__=="__main__":
     
     
     spark =SparkSession.builder.appName("Create KMeans One Hot Encoding").getOrCreate()
-    
-    
-    clustering_features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
-    
-    df_train=pd.read_csv("./data/train_cdn.csv")
-    df_train=df_train.fillna(-1)
+
+    schema = StructType([StructField("timestamp", TimestampType()),
+                         StructField("channel_id", IntegerType()),
+                         StructField("host_id", IntegerType()),
+                         StructField("content_type", IntegerType()),
+                         StructField("protocol", IntegerType()),
+                         StructField("content_id", IntegerType()),
+                         StructField("geo_location", IntegerType()),
+                         StructField("user_id", IntegerType())])
+
+    clustering_features = ['channel_id', 'host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
+
+    df = spark.read.csv("./data/train_cdn.csv", header="true", schema=schema)
+    df_train = df.toPandas().fillna(-1)
     encoder=OneHotEncoder(handle_unknown = 'ignore')
     df_train_ohe=encoder.fit_transform(df_train[clustering_features].iloc[:10000])
     

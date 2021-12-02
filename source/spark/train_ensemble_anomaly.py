@@ -1,11 +1,11 @@
 import pandas as pd
 from sklearn.svm import OneClassSVM
-from sklearn.ensemble import IsolationForest 
+from sklearn.ensemble import IsolationForest
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.cluster import DBSCAN
 from pyspark.sql import SparkSession
-import hdbscan
+from pyspark.sql.types import IntegerType, StructType,StructField,TimestampType
 from joblib import dump
+import hdbscan
 
 
 
@@ -18,12 +18,20 @@ if __name__=="__main__":
     #model_4=DBSCAN()
 
     spark =SparkSession.builder.appName("Create Ensemble Anomaly Detector").getOrCreate()
-    
-    
-    clustering_features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
-    
-    df_train=pd.read_csv("./data/train_cdn.csv")
-    df_train=df_train.fillna(-1)
+
+    schema=StructType([StructField("timestamp",TimestampType()),
+                       StructField("channel_id",IntegerType()),
+    StructField("host_id",IntegerType()),
+    StructField("content_type",IntegerType()),
+    StructField("protocol",IntegerType()),
+    StructField("content_id",IntegerType()),
+    StructField("geo_location",IntegerType()),
+    StructField("user_id",IntegerType())])
+
+    clustering_features=['channel_id','host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
+
+    df = spark.read.csv("./data/train_cdn.csv", header="true", schema=schema)
+    df_train = df.toPandas().fillna(-1)
     print("Models training in progress, please wait a few minutes...")
     
     encoder=OneHotEncoder(handle_unknown = 'ignore')
@@ -45,4 +53,4 @@ if __name__=="__main__":
     dump(model_2,model_2_path_name)
     dump(model_3, model_3_path_name)
     dump(encoder,encoder_path_name)
-    
+    spark.stop()

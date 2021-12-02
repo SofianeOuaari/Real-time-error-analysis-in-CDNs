@@ -29,7 +29,7 @@ if __name__=="__main__":
     pd_df=df.toPandas()
     pd_df=pd_df.fillna(-1)
     pd_df=pd_df[:5000]
-    features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
+    features=['channel_id','host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
     dbscan_prediction(pd_df[features])
     model_dbscan_with_gower = joblib.load("models/dbscan_with_gower.pickle")
     pred_4=model_dbscan_with_gower.labels_  

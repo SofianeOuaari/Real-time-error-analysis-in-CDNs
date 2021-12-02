@@ -8,4 +8,5 @@ docker-compose build spark
 docker-compose push spark
 docker-compose pull spark
 
+docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
 Write-Host "Complete";

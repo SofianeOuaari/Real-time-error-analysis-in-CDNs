@@ -18,6 +18,7 @@ def main():
         .load()
 
     ssc = StreamingContext(spark.sparkContext, 1)
+    ssc.start()
 
     print(df)
     string_df = df.selectExpr("CAST(value AS STRING)")
@@ -32,12 +33,12 @@ def main():
     StructField("geo_location",FloatType()),
     StructField("user_id",FloatType())])
 
-    df_train = spark.read.csv("./data/train_cdn.csv", mode="DROPMALFORMED", schema=schema)
-    df_test = spark.read.csv("./data/test_cdn.csv", mode="DROPMALFORMED", schema=schema)
+    df_train = spark.read.csv("./data/train_cdn.csv", schema=schema)
+    df_test = spark.read.csv("./data/test_cdn.csv", schema=schema)
     df_train = df_train.na.fill(value=-1)
     df_test = df_test.na.fill(value=-1)
 
-    features = ['channel_id', 'host_id', 'content_type', 'protocol', 'content_id', 'geo_location', 'user_id']
+    features = ['channel_id', 'host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
 
     trainingData = df_train[features]
     testingData = df_test[features]
@@ -58,7 +59,6 @@ def main():
     result = model.predictOnValues(testingStream)
     result.pprint()
 
-    ssc.start()
     ssc.stop(stopSparkContext=True, stopGraceFully=True)
 
 if __name__ == "__main__":

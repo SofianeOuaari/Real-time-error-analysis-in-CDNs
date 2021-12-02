@@ -25,7 +25,7 @@ if __name__=="__main__":
     pd_df=df.toPandas()
     pd_df=pd_df.fillna(-1)
     
-    features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
+    features=['channel_id','host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
     model_kmedoids = joblib.load("models/kmedoids.pickle")
     data=pd_df[:5000]
     gower_mat = gower.gower_matrix(data[features],  cat_features = [True,True ,True,True, True,True,True])

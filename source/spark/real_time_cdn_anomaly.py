@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     
     def predict(row):
-        features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
+        features=['channel_id','host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
         model_svm=joblib.load("models/svm.pickle")
         model_iforest=joblib.load("models/iforest.pickle")
         model_hdbscan = joblib.load("models/hdbscan.pickle")
@@ -81,6 +81,5 @@ if __name__ == "__main__":
     df_prediction.selectExpr("prediction_timestamp AS key", "to_json(struct(*)) AS value").writeStream.format("kafka").outputMode("append").option("kafka.bootstrap.servers", "localhost:9092") \
   .option("topic", "cdn_result") \
   .option("checkpointLocation", "checkpoints").start().awaitTermination()
-  
   
   # Schemas CDN*json

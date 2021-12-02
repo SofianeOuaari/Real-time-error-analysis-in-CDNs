@@ -1,14 +1,11 @@
-import pyspark
 from pyspark.sql.session import SparkSession
-from pyspark.sql.functions import explode, split, col, from_json,udf
-from pyspark.sql.types import StructType, StructField, StringType, TimestampType, FloatType,IntegerType
+from pyspark.sql.functions import col, from_json,udf
+from pyspark.sql.types import StructType, StructField, StringType, TimestampType,IntegerType
 import gower
 import pandas as pd
 import numpy as np
 import json
 import joblib
-import time
-import uuid
 from sklearn_extra.cluster import KMedoids
 
 
@@ -41,7 +38,7 @@ if __name__ == "__main__":
     json_df = string_df.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
 
     # Print out the dataframe schema
-    features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
+    features=['channel_id','host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
     for col_name in features:
         json_df = json_df.withColumn(col_name, col(col_name).cast('int'))
     

@@ -13,7 +13,7 @@ if __name__=="__main__":
     StructField("geo_location",IntegerType()),
     StructField("user_id",IntegerType())])
     
-    df=spark.read.csv("./data/train_cdn.csv",mode="DROPMALFORMED",schema=schema)
+    df=spark.read.csv("./data/train_cdn.csv",schema=schema)
     tumblingWindows = df.withWatermark("timestamp", "120 minutes").groupBy("host_id", window("timestamp", "120 minutes")).count()
 
     tumblingWindows.show()

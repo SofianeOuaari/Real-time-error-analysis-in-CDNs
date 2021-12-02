@@ -1,4 +1,3 @@
-import pyspark
 from pyspark.sql.session import SparkSession
 from pyspark.sql.functions import explode, split, col, from_json,udf
 from pyspark.sql.types import StructType, StructField, StringType, TimestampType, FloatType,IntegerType
@@ -39,13 +38,13 @@ if __name__ == "__main__":
     
 
     # Print out the dataframe schema
-    features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
+    features=['channel_id','host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
     for col_name in features:
         json_df = json_df.withColumn(col_name, col(col_name).cast('int'))
 
     
     def predict(row):
-        features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
+        features=['channel_id','host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
         model_svm=joblib.load("models/svm.pickle")
         model_iforest=joblib.load("models/iforest.pickle")
         df_train_dbscan=pd.read_csv("./data/train_cdn.csv").iloc[:1000]

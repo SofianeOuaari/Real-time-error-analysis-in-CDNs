@@ -1,15 +1,10 @@
-import pyspark
 from pyspark.sql.session import SparkSession
 from pyspark.sql.functions import explode, split, col, from_json,udf
-from pyspark.sql.types import StructType, StructField, StringType, TimestampType, FloatType,IntegerType
-from pyspark.ml.clustering import KMeansModel
-from pyspark.ml.feature import VectorAssembler
+from pyspark.sql.types import StructType, StructField, StringType, TimestampType,IntegerType
 import pandas as pd
 import numpy as np
 import json
 import joblib
-import time
-import uuid
 
 if __name__ == "__main__":
     spark = SparkSession \
@@ -40,7 +35,7 @@ if __name__ == "__main__":
     json_df = string_df.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
 
     # Print out the dataframe schema
-    features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
+    features=['channel_id','host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
     for col_name in features:
         json_df = json_df.withColumn(col_name, col(col_name).cast('int'))
     
@@ -48,7 +43,7 @@ if __name__ == "__main__":
 
     
     def predict(row):
-        features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
+        features=['channel_id','host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
         model_kmeans=joblib.load("models/kmeans_7.pickle")
         encoder=joblib.load("processing_obj/ohe.pickle")
         

@@ -1,5 +1,4 @@
-import pandas as pd 
-#from sklearn.model_selection import train_test_split
+import pandas as pd
 
 df=pd.read_csv("./data/alldata_skab.csv",sep=",")
 df_train=df.iloc[:int(len(df)*0.75)]

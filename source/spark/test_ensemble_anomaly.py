@@ -25,11 +25,11 @@ if __name__=="__main__":
     StructField("geo_location",IntegerType()),
     StructField("user_id",IntegerType())])
     
-    df=spark.read.csv("./data/test_cdn.csv",schema=schema)
+    df=spark.read.csv("./data/test_cdn.csv", header="true", schema=schema)
     pd_df=df.toPandas()
     pd_df=pd_df.fillna(-1)
     
-    features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
+    features=['channel_id','host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
 
     dbscan_prediction(pd_df[features])
     
@@ -38,6 +38,8 @@ if __name__=="__main__":
     model_hdbscan = joblib.load("models/hdbscan.pickle")
     model_dbscan = joblib.load("models/dbscan.pickle")
     encoder=joblib.load("processing_obj/ohe.pickle")
+
+    print("Generation of predictions in progress, please wait a few moment...")
     pred_1=model_svm.predict(encoder.transform(pd_df[features]))
     pred_2=model_iforest.predict(pd_df[features])
     pred_3, _ = hdbscan.approximate_predict(model_hdbscan, pd_df[features])
@@ -57,3 +59,6 @@ if __name__=="__main__":
     sparkDF.printSchema()
     sparkDF.show()
     #sparkDF.filter(sparkDF.pred == 0).show()
+    sparkDF.filter(sparkDF.pred == 1).show()
+    print(preds.count(1), " anomalies detected (", preds.count(1)/len(preds)*100, "%) \n")
+    spark.stop()
