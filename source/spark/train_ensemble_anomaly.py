@@ -26,7 +26,7 @@ if __name__=="__main__":
     df_train=df_train.fillna(-1)
     print("Models training in progress, please wait a few minutes...")
     
-    encoder=OneHotEncoder()
+    encoder=OneHotEncoder(handle_unknown = 'ignore')
     df_train_ohe=encoder.fit_transform(df_train[clustering_features].iloc[:10000])
     
     model_1.fit(df_train_ohe)

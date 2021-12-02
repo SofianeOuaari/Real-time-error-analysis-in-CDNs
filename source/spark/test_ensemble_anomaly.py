@@ -25,9 +25,8 @@ if __name__=="__main__":
     StructField("geo_location",IntegerType()),
     StructField("user_id",IntegerType())])
     
-    df=spark.read.csv("./data/test_cdn.csv",mode="DROPMALFORMED",schema=schema)
+    df=spark.read.csv("./data/test_cdn.csv",schema=schema)
     pd_df=df.toPandas()
-
     pd_df=pd_df.fillna(-1)
     
     features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
@@ -57,4 +56,4 @@ if __name__=="__main__":
     sparkDF=spark.createDataFrame(pd_df)
     sparkDF.printSchema()
     sparkDF.show()
-    #sparkDF.filter(sparkDF.pred == 1).show()
+    #sparkDF.filter(sparkDF.pred == 0).show()
