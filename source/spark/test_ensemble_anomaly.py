@@ -33,12 +33,13 @@ if __name__=="__main__":
     features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
 
     dbscan_prediction(pd_df[features])
+    
     model_svm = joblib.load("models/svm.pickle")
     model_iforest = joblib.load("models/iforest.pickle")
     model_hdbscan = joblib.load("models/hdbscan.pickle")
     model_dbscan = joblib.load("models/dbscan.pickle")
-
-    pred_1=model_svm.predict(pd_df[features])
+    encoder=joblib.load("processing_obj/ohe.pickle")
+    pred_1=model_svm.predict(encoder.transform(pd_df[features]))
     pred_2=model_iforest.predict(pd_df[features])
     pred_3, _ = hdbscan.approximate_predict(model_hdbscan, pd_df[features])
     pred_4=model_dbscan.labels_
