@@ -24,9 +24,9 @@ if __name__=="__main__":
     df_train=pd.read_csv("./data/train_cdn.csv")
     df_train=df_train.fillna(-1)
     encoder=OneHotEncoder()
-    df_train_ohe=encoder.fit_transform(df_train.iloc[:1000])
+    df_train_ohe=encoder.fit_transform(df_train[clustering_features].iloc[:10000])
     
-    model_1=KMeans(7)
+    model_1=KMeans(7,n_jobs=-1)
     
     model_1.fit(df_train_ohe)
 
