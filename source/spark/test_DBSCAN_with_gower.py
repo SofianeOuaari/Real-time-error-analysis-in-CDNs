@@ -25,7 +25,7 @@ if __name__=="__main__":
     StructField("geo_location",IntegerType()),
     StructField("user_id",IntegerType())])
     
-    df=spark.read.csv("./data/test_cdn.csv",mode="DROPMALFORMED",schema=schema)
+    df=spark.read.csv("./data/test_cdn.csv",schema=schema)
     pd_df=df.toPandas()
     pd_df=pd_df.fillna(-1)
     pd_df=pd_df[:5000]

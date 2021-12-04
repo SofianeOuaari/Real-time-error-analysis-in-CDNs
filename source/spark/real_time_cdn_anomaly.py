@@ -36,7 +36,7 @@ if __name__ == "__main__":
     json_df = string_df.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
 
     # Print out the dataframe schema
-    features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
+    features=['channel_id','host_id', 'content_type', 'protocol','geo_location', 'user_id']
     for col_name in features:
         json_df = json_df.withColumn(col_name, col(col_name).cast('int'))
 

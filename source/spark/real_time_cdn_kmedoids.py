@@ -45,7 +45,7 @@ if __name__ == "__main__":
     
     
     def predict(row):
-        features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
+        features=['channel_id','host_id', 'content_type', 'protocol','geo_location', 'user_id']
         model=joblib.load("models/kmedoids.pickle")
         
         d = json.loads(row)
