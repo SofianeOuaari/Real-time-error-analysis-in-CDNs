@@ -1,0 +1,26 @@
+CDNInfluxDBLoader:
+  schema: "Prediction"
+  group_id: "prediction_influxdb_loader001"
+  kafka_input_topic: "cdn_result"
+  influx_db_config:
+    input_conf:
+      database: "cdn_client_data_storage"
+      measurement:  "predictions"
+      query: "SELECT * FROM predictions"
+
+    output_conf:
+      database: "cdn_client_data_storage"
+      measurement: !!python/dict {"measurement": "predictions"}
+      schema:
+        tags:
+        time: prediction_timestamp
+        fields:
+          - sample_id
+          - prediction
+      type_map:
+        prediction: "int"
+      write_conf:
+        time_precision: "ms"
+        batch_size: 10
+        protocol: "json"
+
