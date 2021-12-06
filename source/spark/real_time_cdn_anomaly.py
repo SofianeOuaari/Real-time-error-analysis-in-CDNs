@@ -78,7 +78,7 @@ if __name__ == "__main__":
                        StructField("prediction",IntegerType())])
     df_prediction = df_prediction.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
         
-    df_prediction.selectExpr("prediction_timestamp AS key", "to_json(struct(*)) AS value").writeStream.format("kafka").outputMode("append").option("kafka.bootstrap.servers", "localhost:9092") \
+    df_prediction.selectExpr("sample_id AS key", "to_json(struct(*)) AS value").writeStream.format("kafka").outputMode("append").option("kafka.bootstrap.servers", "localhost:9092") \
   .option("topic", "cdn_result") \
   .option("checkpointLocation", "checkpoints").start().awaitTermination()
   
