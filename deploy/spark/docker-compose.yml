@@ -1,0 +1,12 @@
+---
+version: '3'
+
+services:
+  spark:
+    image: ${CDN_REGISTRY}/cdn_spark:1.0.0
+    hostname: cdn-spark
+    container_name: cdn-spark
+    restart: always
+    #command: sleep 3000
+    environment:
+      CDN_HOME: '/home/'
