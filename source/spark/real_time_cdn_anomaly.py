@@ -49,14 +49,17 @@ if __name__ == "__main__":
         encoder=joblib.load("processing_obj/ohe.pickle")
         
         d = json.loads(row)
+        print(d)
         p = pd.DataFrame.from_dict(d, orient = "index").transpose()
         p = p.replace(r'^\s*$', np.NaN, regex=True)
         p=p.fillna(-1)
         p[features]=p[features].astype(float)
         #pred_1=model_svm.predict(p[features].astype(float))
         pred_1=model_svm.predict(encoder.transform(p[features]))
-        pred_2=model_iforest.predict(p[features]).astype(float)
-        pred_3 = hdbscan.approximate_predict(model_hdbscan, p[features])[0][0].astype(float)
+        pred_2=model_iforest.predict(p[features])
+        #pred_3 = hdbscan.approximate_predict(model_hdbscan, p[features])[0][0].astype(float)
+        pred_3, _ = hdbscan.approximate_predict(model_hdbscan, p[features])
+        print(p)
 
         preds=[]
         for p_1,p_2,p_3 in zip(pred_1,pred_2,pred_3):
@@ -66,19 +69,23 @@ if __name__ == "__main__":
                 preds.append(0)
         
         p["pred"]=np.array(preds)
-        result = {'sample_id':d['sample_id'],'prediction_timestamp': d['timestamp'], 'prediction': preds[0]} 
+        result = {'sample_id':d['sample_id'],'prediction_timestamp': d['timestamp'], 'prediction': preds[0]}
+        print(result)
         return str(json.dumps(result))
     
     
     score_udf = udf(predict, StringType())    
     df_prediction = string_df.select(score_udf("value").alias("value"))
         
-    schema =StructType([StructField("sample_id",StringType()),
+    '''schema =StructType([StructField("sample_id",StringType()),
                         StructField("prediction_timestamp",StringType()),
                        StructField("prediction",IntegerType())])
-    df_prediction = df_prediction.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
+    df_prediction = df_prediction.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")'''
         
-    df_prediction.selectExpr("sample_id AS key", "to_json(struct(*)) AS value").writeStream.format("kafka").outputMode("append").option("kafka.bootstrap.servers", "localhost:9092") \
+    '''df_prediction.selectExpr("sample_id AS key", "to_json(struct(*)) AS value").writeStream.format("kafka").outputMode("append").option("kafka.bootstrap.servers", "localhost:9092") \
+  .option("topic", "cdn_result") \
+  .option("checkpointLocation", "checkpoints").start().awaitTermination()'''
+    df_prediction.writeStream.format("kafka").outputMode("append").option("kafka.bootstrap.servers", "localhost:9092") \
   .option("topic", "cdn_result") \
   .option("checkpointLocation", "checkpoints").start().awaitTermination()
   
