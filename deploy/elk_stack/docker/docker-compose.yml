@@ -20,6 +20,6 @@ services:
         command: filebeat -e -strict.perms=false
         user: root
         volumes:
-            - ${CDN_HOME}/deploy/elk_stack/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+            - ${CDN_HOME}/deploy/elk_stack/docker/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
             - /var/lib/docker:/var/lib/docker:ro
             - /var/run/docker.sock:/var/run/docker.sock
