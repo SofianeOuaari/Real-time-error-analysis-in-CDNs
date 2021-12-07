@@ -12,10 +12,12 @@ CDN_DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S:.%f%z"
 class CDNMessageLoader:
     def __init__(
         self,
+        schema: str,
         group_id: str,
         kafka_input_topic: str,
         influx_db_config: dict
     ) -> None:
+        self.schema_helper = cdnt.schema.create_helper(schema)
         self.group_id = group_id
         self.kafka_input_topic = kafka_input_topic
         self.influx_db_config = influx_db_config
@@ -44,6 +46,7 @@ class CDNMessageLoader:
         """
         try:
             cdnt.log.info(f"Received message: {message}")
+            self.schema_helper.validate(message)
             time = self.idbl.output_conf['schema']["time"]
             message[time] = parser.isoparse(
                 message[time]).replace(tzinfo=tz.gettz(CDN_TIME_ZONE))
