@@ -28,22 +28,6 @@ if __name__ == "__main__":
     string_df = df.selectExpr("CAST(value AS STRING)")
     print(string_df)
 
-    schema =StructType([StructField("timestamp",TimestampType()),
-                       StructField("channel_id",IntegerType()),
-    StructField("host_id",IntegerType()),
-    StructField("content_type",IntegerType()),
-    StructField("protocol",IntegerType()),
-    StructField("content_id",IntegerType()),
-    StructField("geo_location",IntegerType()),
-    StructField("user_id",IntegerType())])
-
-    json_df = string_df.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
-
-    # Print out the dataframe schema
-    features=['channel_id','host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
-    for col_name in features:
-        json_df = json_df.withColumn(col_name, col(col_name).cast('int'))
-    
     
     
     def predict(row):
@@ -64,12 +48,7 @@ if __name__ == "__main__":
     
     score_udf = udf(predict, StringType())    
     df_prediction = string_df.select(score_udf("value").alias("value"))
-        
-    schema =StructType([StructField("prediction_timestamp",StringType()),
-                       StructField("prediction",IntegerType())])
-    df_prediction = df_prediction.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
-        
-    df_prediction.selectExpr("prediction_timestamp AS key", "to_json(struct(*)) AS value").writeStream.format("kafka").outputMode("append").option("kafka.bootstrap.servers", "localhost:9092") \
+    df_prediction.writeStream.format("kafka").outputMode("append").option("kafka.bootstrap.servers", "localhost:9092") \
   .option("topic", "cdn_result") \
   .option("checkpointLocation", "checkpoints").start().awaitTermination()
   
