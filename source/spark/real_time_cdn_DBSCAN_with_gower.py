@@ -42,7 +42,8 @@ if __name__ == "__main__":
         gower_mat = gower.gower_matrix(p,  cat_features = [True,True ,True,True, True,True,True])
         preds=model.fit_predict(gower_mat)
         p["pred"]=np.array(preds)
-        result = {'prediction_timestamp': d['timestamp'], 'prediction': preds[0]} 
+        result = {'sample_id':d['sample_id'],'prediction_timestamp': d['timestamp'], 'prediction': preds[0]}
+        print(result)
         return str(json.dumps(result))
     
     

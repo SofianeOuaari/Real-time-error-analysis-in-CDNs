@@ -55,7 +55,8 @@ if __name__ == "__main__":
         
         p["pred"]=np.array(preds)
         #result = {'prediction_ID':uuid.uuid4().int & (1<<64)-1,'prediction_timestamp': d['timestamp'], 'prediction': preds[0]} 
-        result = {'prediction_timestamp': d['timestamp'], 'prediction': preds[0]} 
+        result = {'sample_id':d['sample_id'],'prediction_timestamp': d['timestamp'], 'prediction': preds[0]}
+        print(result)
         return str(json.dumps(result))
     
     
