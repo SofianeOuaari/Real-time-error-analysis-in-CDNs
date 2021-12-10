@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType,StructField,StringType,TimestampType,FloatType
+from pyspark.sql.types import StructType,StructField,TimestampType,FloatType
 from pyspark.ml.clustering import KMeansModel
 from pyspark.ml.feature import VectorAssembler
 

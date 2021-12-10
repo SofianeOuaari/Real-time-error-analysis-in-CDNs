@@ -5,6 +5,10 @@
   "version": "1.0.0",
   "type": "object",
   "properties": {
+    "sample_id": {
+      "description": "ID of the client data sample",
+      "type": "string"
+    },
     "channel_id": {
       "description": "Issued by a server in response to a client’s request made to the server.",
       "type": "integer",
@@ -42,6 +46,7 @@
   },
   "additionalProperties": false,
   "required": [
+    "sample_id",
     "channel_id",
     "timestamp",
     "host_id",

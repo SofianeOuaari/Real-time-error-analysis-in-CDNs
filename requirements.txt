@@ -7,6 +7,5 @@ findspark
 elasticsearch
 influxdb
 influxdb_client
-hdbscan
-gower
-scikit-learn-extra
+scikit-learn
+joblib

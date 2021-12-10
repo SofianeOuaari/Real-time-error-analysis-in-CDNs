@@ -1,8 +1,10 @@
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.cluster import KMeans
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType,StructField,IntegerType,TimestampType
+from pyspark.sql.types import StructType,StructField,TimestampType,IntegerType
 from joblib import dump
+import gower
+from sklearn_extra.cluster import KMedoids
+
+
 
 
 
@@ -10,7 +12,7 @@ from joblib import dump
 if __name__=="__main__":
     
     
-    spark =SparkSession.builder.appName("Create KMeans One Hot Encoding").getOrCreate()
+    spark =SparkSession.builder.appName("Create Kmedoids with gower").getOrCreate()
 
     schema = StructType([StructField("timestamp", TimestampType()),
                          StructField("channel_id", IntegerType()),
@@ -25,22 +27,9 @@ if __name__=="__main__":
 
     df = spark.read.csv("./data/train_cdn.csv", header="true", schema=schema)
     df_train = df.toPandas().fillna(-1)
-    encoder=OneHotEncoder(handle_unknown = 'ignore')
-    df_train_ohe=encoder.fit_transform(df_train[clustering_features].iloc[:10000])
+    data=df_train[:10000]
+    gower_mat = gower.gower_matrix(data,  cat_features = [True,False,True ,True,True, True,True,True])
+    model_5 = KMedoids(n_clusters = 6, random_state = 0, metric = 'precomputed', method = 'pam', init =  'k-medoids++').fit(gower_mat)
     
-    model_1=KMeans(7,n_jobs=-1)
-    
-    model_1.fit(df_train_ohe)
-
-    model_1_path_name="models/kmeans_7.pickle"
-    encoder_path_name="processing_obj/ohe.pickle"
-    
-    dump(model_1,model_1_path_name)
-    
-    dump(encoder,encoder_path_name)
-    
-    
-
-
-
-    
+    model_5_path_name="models/kmedoids.pickle"
+    dump(model_5,model_5_path_name)    

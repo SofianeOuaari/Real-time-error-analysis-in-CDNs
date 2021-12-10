@@ -43,10 +43,11 @@ RUN apt-get update -y \
  && mv spark-3.2.0-bin-hadoop2.7 /opt/spark/ \
  && rm spark.tgz
 
-
 # Set Spark environment
 ENV SPARK_HOME=/opt/spark
 ENV PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
+COPY ${CDN_HOME}/build/spark/requirements.txt $SPARK_HOME/requirements.txt
+RUN pip3 install -r ${SPARK_HOME}/requirements.txt
 
 # EXPOSE CONTAINER PORTS
 EXPOSE 4040 6066 7077 8080
@@ -60,9 +61,10 @@ COPY ${CDN_HOME}/source/data $SPARK_HOME/data
 COPY ${CDN_HOME}/source/spark/ $SPARK_HOME/spark_code
 COPY ${CDN_HOME}/source/spark/models $SPARK_HOME/models
 COPY ${CDN_HOME}/source/spark/processing_obj $SPARK_HOME/processing_obj
-COPY ${CDN_HOME}/build/spark/requirements.txt $SPARK_HOME/requirements.txt
-
-RUN pip3 install -r requirements.txt
 
 # Run commands
+ADD ${CDN_HOME}/build/spark/entrypoint.sh ${SPARK_HOME}
+RUN chmod +x ${SPARK_HOME}/entrypoint.sh
+
+ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]
 CMD ["bin/spark-class", "org.apache.spark.deploy.master.Master", "org.apache.spark.deploy.worker.Worker"]

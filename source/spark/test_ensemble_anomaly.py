@@ -8,10 +8,8 @@ from sklearn.preprocessing import StandardScaler
 from joblib import dump
 import hdbscan
 
-def dbscan_prediction(test_data):
+def dbscan_prediction(df_dbscan):
     model_3_path_name = "models/dbscan.pickle"
-    df_dbscan = pd.read_csv(test_data)
-    df_dbscan = df_dbscan.drop(columns=['timestamp', 'content_id']).fillna(df_dbscan.drop(columns=['timestamp', 'content_id']).mean())
     X = StandardScaler().fit_transform(df_dbscan)
     model_3 = DBSCAN(min_samples=1000, eps=1.0).fit(X)
     dump(model_3, model_3_path_name)
@@ -27,28 +25,30 @@ if __name__=="__main__":
     StructField("geo_location",IntegerType()),
     StructField("user_id",IntegerType())])
     
-    df=spark.read.csv("../data/test_cdn.csv",mode="DROPMALFORMED",schema=schema)
+    df=spark.read.csv("./data/test_cdn.csv", header="true", schema=schema)
     pd_df=df.toPandas()
-
     pd_df=pd_df.fillna(-1)
     
-    features=['channel_id','host_id', 'content_type', 'protocol','content_id', 'geo_location', 'user_id']
+    features=['channel_id','host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
 
-    #dbscan_prediction("../data/test_cdn.csv")
+    dbscan_prediction(pd_df[features])
+    
     model_svm = joblib.load("models/svm.pickle")
     model_iforest = joblib.load("models/iforest.pickle")
     model_hdbscan = joblib.load("models/hdbscan.pickle")
-    #model_dbscan = joblib.load("models/dbscan.pickle")
+    model_dbscan = joblib.load("models/dbscan.pickle")
+    encoder=joblib.load("processing_obj/ohe.pickle")
 
-    pred_1=model_svm.predict(pd_df[features])
+    print("Generation of predictions in progress, please wait a few moment...")
+    pred_1=model_svm.predict(encoder.transform(pd_df[features]))
     pred_2=model_iforest.predict(pd_df[features])
     pred_3, _ = hdbscan.approximate_predict(model_hdbscan, pd_df[features])
-    #pred_4=model_dbscan.labels_
+    pred_4=model_dbscan.labels_
 
     preds=[]
     
-    for p_1,p_2,p_3 in zip(pred_1,pred_2,pred_3):
-        if p_1==-1 and p_2==-1 and p_3==-1:
+    for p_1,p_2,p_3,p_4 in zip(pred_1,pred_2,pred_3, pred_4):
+        if p_1==-1 and p_2==-1 and p_3==-1 and p_4==-1:
             preds.append(1)
         else:
             preds.append(0)
@@ -58,4 +58,7 @@ if __name__=="__main__":
     sparkDF=spark.createDataFrame(pd_df)
     sparkDF.printSchema()
     sparkDF.show()
-    #sparkDF.filter(sparkDF.pred == 1).show()
+    #sparkDF.filter(sparkDF.pred == 0).show()
+    sparkDF.filter(sparkDF.pred == 1).show()
+    print(preds.count(1), " anomalies detected (", preds.count(1)/len(preds)*100, "%) \n")
+    spark.stop()

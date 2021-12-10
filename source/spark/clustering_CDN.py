@@ -34,12 +34,12 @@ if __name__ == "__main__":
     json_df = string_df.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
 
     # Print out the dataframa schema
-    int_columns = ["channel_id", "host_id", "content_type", "protocol", "content_id", "geo_location", "user_id"]
+    int_columns = ["channel_id", "host_id", "content_type", "protocol", "geo_location", "user_id"]
     for col_name in int_columns:
         json_df = json_df.withColumn(col_name, col(col_name).cast('int'))
 
     json_df = json_df.na.drop("any")
-    cols = ("channel_id", "host_id", "content_type", "protocol", "content_id", "geo_location", "user_id")
+    cols = ("channel_id", "host_id", "content_type", "protocol", "geo_location", "user_id")
     assembler = VectorAssembler().setInputCols(cols).setOutputCol("features")
     featureDf = assembler.transform(json_df)
     print(featureDf)

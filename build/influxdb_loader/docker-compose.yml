@@ -1,0 +1,11 @@
+---
+version: '3.4'
+services:
+  # 1.0.0 - Initial version of cdn client data influxdb loader
+  influxdb_loader:
+    image: ${CDN_REGISTRY}/influxdb_loader:1.0.0
+    build:
+      context: ${CDN_HOME}/
+      dockerfile: /build/influxdb_loader/Dockerfile
+      args:
+        CDN_REGISTRY: ${CDN_REGISTRY}

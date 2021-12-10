@@ -26,10 +26,16 @@ class ClientDataSchemaError(CDNSchemaError):
         super().__init__(message, payload)
 
 
+class PredictionSchemaError(CDNSchemaError):
+    def __init__(self, message: str, payload: str = None) -> None:
+        super().__init__(message, payload)
+
+
 class SchemaErrorFactory(object):
 
     builder = {
         'ClientData': ClientDataSchemaError,
+        'Prediction': PredictionSchemaError
     }
 
     @classmethod
@@ -104,10 +110,20 @@ class ClientDataSchemaHelper(AbstractSchemaHelper):
         )
 
 
+class PredictionSchemaHelper(AbstractSchemaHelper):
+
+    def __init__(self):
+        super().__init__(
+            os.path.join(os.getcwd(), 'schemas', 'cdn_prediction.json'),
+            'Prediction'
+        )
+
+
 class SchemaHelperFactory(object):
 
     builder = {
         'ClientData': ClientDataSchemaHelper,
+        'Prediction': PredictionSchemaHelper
     }
 
     @classmethod

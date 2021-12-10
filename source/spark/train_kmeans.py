@@ -27,7 +27,7 @@ if __name__=="__main__":
         .option("delimiter", ",")\
         .schema(schema)'''
 
-    df=spark.read.csv("data/train.csv",mode="DROPMALFORMED",schema=schema)
+    df=spark.read.csv("./data/train.csv",mode="DROPMALFORMED",schema=schema)
 
     columns_to_drop = ['anomaly', 'changepoint']
     df = df.drop(*columns_to_drop)

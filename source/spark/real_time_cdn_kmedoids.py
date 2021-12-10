@@ -1,10 +1,13 @@
 from pyspark.sql.session import SparkSession
-from pyspark.sql.functions import explode, split, col, from_json,udf
+from pyspark.sql.functions import col, from_json,udf
 from pyspark.sql.types import StructType, StructField, StringType, TimestampType,IntegerType
+import gower
 import pandas as pd
 import numpy as np
 import json
 import joblib
+from sklearn_extra.cluster import KMedoids
+
 
 if __name__ == "__main__":
     spark = SparkSession \
@@ -25,21 +28,19 @@ if __name__ == "__main__":
 
     
     
-
     
     def predict(row):
-        features=['channel_id','host_id', 'content_type', 'protocol', 'geo_location', 'user_id']
-        model_kmeans=joblib.load("models/kmeans_7.pickle")
-        encoder=joblib.load("processing_obj/ohe.pickle")
+        features=['channel_id','host_id', 'content_type', 'protocol','geo_location', 'user_id']
+        model=joblib.load("models/kmedoids.pickle")
         
         d = json.loads(row)
         p = pd.DataFrame.from_dict(d, orient = "index").transpose()
         p = p.replace(r'^\s*$', np.NaN, regex=True)
         p=p.fillna(-1)
         p[features]=p[features].astype(float)
-        preds=model_kmeans.predict(encoder.transform(p[features]))
+        gower_mat = gower.gower_matrix(p,  cat_features = [True,True ,True,True, True,True,True])
+        preds=model.fit_predict(gower_mat)
         p["pred"]=np.array(preds)
-        #result = {'prediction_ID':uuid.uuid4().int & (1<<64)-1,'prediction_timestamp': d['timestamp'], 'prediction': preds[0]} 
         result = {'sample_id':d['sample_id'],'prediction_timestamp': d['timestamp'], 'prediction': preds[0]}
         print(result)
         return str(json.dumps(result))
@@ -50,6 +51,7 @@ if __name__ == "__main__":
     df_prediction.writeStream.format("kafka").outputMode("append").option("kafka.bootstrap.servers", "localhost:9092") \
   .option("topic", "cdn_result") \
   .option("checkpointLocation", "checkpoints").start().awaitTermination()
+  
   
   
   # Schemas CDN*json
