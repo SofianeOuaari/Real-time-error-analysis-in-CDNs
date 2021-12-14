@@ -41,7 +41,9 @@ if __name__ == "__main__":
         gower_mat = gower.gower_matrix(p,  cat_features = [True,True ,True,True, True,True,True])
         preds=model.fit_predict(gower_mat)
         p["pred"]=np.array(preds)
-        result = {'sample_id':d['sample_id'],'prediction_timestamp': d['timestamp'], 'prediction': preds[0]}
+        cluster_number=str(p["pred"][0]+1)
+        tag="Cluster_"+cluster_number
+        result = {'sample_id':d['sample_id'],'prediction_timestamp': d['timestamp'], 'prediction': preds[0],"tag":tag,"pipeline_type":"KMedoids"}
         print(result)
         return str(json.dumps(result))
     

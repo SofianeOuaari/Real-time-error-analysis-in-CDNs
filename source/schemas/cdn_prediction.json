@@ -18,12 +18,22 @@
       "description": "Value of the predicted class.",
       "type": "integer",
       "format": "integer"
+    },
+    "tag": {
+      "description": "Tag about the type of prediction",
+      "type": "string"
+    },
+    "pipeline_type": {
+      "description": "Name of the used pipeline",
+      "type": "string"
     }
   },
   "additionalProperties": false,
   "required": [
     "sample_id",
     "prediction_timestamp",
-    "prediction"
+    "prediction",
+    "tag",
+    "pipeline_type"
   ]
 }

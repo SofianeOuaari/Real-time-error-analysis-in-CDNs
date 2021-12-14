@@ -53,7 +53,11 @@ if __name__ == "__main__":
                 preds.append(0)
         
         p["pred"]=np.array(preds)
-        result = {'sample_id':d['sample_id'],'prediction_timestamp': d['timestamp'], 'prediction': preds[0]}
+        if preds[0]==0:
+            tag="Normal"
+        else:
+            tag="Anomaly"
+        result = {'sample_id':d['sample_id'],'prediction_timestamp': d['timestamp'], 'prediction': preds[0],"tag":tag,"pipeline_type":"Consensus_Model"}
         print(result)
         return str(json.dumps(result))
     
