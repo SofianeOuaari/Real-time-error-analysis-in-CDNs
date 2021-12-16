@@ -39,8 +39,9 @@ if __name__ == "__main__":
         p[features]=p[features].astype(float)
         preds=model_kmeans.predict(encoder.transform(p[features]))
         p["pred"]=np.array(preds)
-        #result = {'prediction_ID':uuid.uuid4().int & (1<<64)-1,'prediction_timestamp': d['timestamp'], 'prediction': preds[0]} 
-        result = {'sample_id':d['sample_id'],'prediction_timestamp': d['timestamp'], 'prediction': preds[0]}
+        cluster_number=str(p["pred"][0]+1)
+        tag="Cluster_"+cluster_number
+        result = {'sample_id':d['sample_id'],'prediction_timestamp': d['timestamp'], 'prediction': preds[0],"tag":tag,"pipeline_type":"KMeans_OHE"}
         print(result)
         return str(json.dumps(result))
     

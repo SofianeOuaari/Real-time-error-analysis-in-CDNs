@@ -1,70 +1,24 @@
-# Real-time-error-analysis-in-CDNs
+The project source code is divided into 4 distinguished sections. 
 
+ - **Build**:  This  section  contains a set of Docker files to build the images. One of the building blocks is **basepython3** which is an image containing the different python modules and libraries used by other images/containers.
+ - **Deploy:** This part contains the docker-compose files to run the needed containers.
+ - **Source**: Here is where the programming magic happens, this sections contains  the  different  python  scripts  assigned  to  each  container  in  order  to stream data, train the models, to make the real-time inference and other dynamic operations. It also includes the schemas describing the attributes of the kafka messages namely CDN data and predictions.
+ - **System**:  This folder contains the sources.yaml files, the main system variables including IP addresses and port numbers.
 
+Everything is containerized as Docker containers. Docker image building (from application source code or other used technologies) is designed to support versioning. Most of the container images are stored in our local registry. **base_python3** is the image that our python specific applications use to build upon. It contains necessary packages and sysadmin settings. **Registry** is a container used for storing Docker images with our own system specific version on a server. The server is currently the host machine that runs the containers. The images are pushed to the registry after building with specific versions. If the component introduces a bug, the previous working version can be immediately pulled from the registry and can be deployed (roll-back facility). The different sections contain scripts for Linux and Windows powershell to automate the deployment on any host machine (using docker commands).
 
-**Technologies Involved**
+# Data  Streaming  Logic
+In  order  to  simulate  the  incoming  stream  we  use the container named **Data Provider**. It reads the test data from the mounted volume and performs minimal data engineering. It sorts the data according tothe timestamps and attaches an ID to every sample. This sample is later used to associate model predictions with the sample. This class sends the incoming stream  to  2  Kafka  topics.  One  topic  delivers  the  messages  to  the  ML  models and the other topic delivers the incoming stream to the **InfluxDB Client DataLoader**, which loads the data to InfluxDB for real-time and for later analysis. We have pre-defined data schemas which are described with “.json” files in the source folder of the code. We perform data engineering on the incoming stream to satisfy the validation schema before the data provider publishes them to themodel.
+## Spark ML 
+The machine learning chemistry happens inside the spark container.Two main tasks are performed inside:
 
-For this university project related to the "Stream Mining" + "Open-Source Technologies" course, where the main aim is to build a data streaming infrastructure using a stack of technologies to cluster and detect anomalies within the content delivery network data. 
-
-The different technologies used are : Python-Docker-Kafka-Spark. 
-
-## Installing The Python Dependencies: 
-
-        pip install -r requirements.txt
-
-## Creating the Spark Environment 
-1. Building the Spark Image
-On docker run the command:
-
-        docker build -t voltage_spark -f Dockerfile .
-
-The Dockerfile contains all the necessary instructions to build and assemble an image which contains spark (and its Python variant pyspark) and run containers as an instance of this image. 
-The Dockerfile will first create a Ubuntu environment, then install Python (we used python-slim since it gives a faster installation than the default Alpine Linux distribution) and Java (JRE is necessary for spark to run) and Spark 3.2.0. As a last step it will copy the data,spark_code and models folders to the built image.
-
-
-After that run a container for spark by executing the command: 
-
-        docker run --rm --network host -it voltage_spark /bin/bash
-
-2. Training a Clustering Model In PySpark
-
-Inside the spark shell run the command: 
-
-        spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.0 spark_code/train_kmeans.py
-
-Here a KMeans model (using 5 clusters) will be trained and the centroids will be outputted in the end and the model will be saved uner thd folder "/models".
-
-
-## Kafka 
-1. Installation
-We will run the related kafka containers using *docker-compose*, execute the following commands: 
-
-        cd kafka
-        docker-compose -f docker-compose.yml up -d
-
-2. Producer
-The Kafka Producer will have the role to turn the test csv file into streamed data and send it to spark for real-time clustering prediction.
-3. Consumer 
-It is the python script called *clustering_predictions_consumer.py* which will receive the predictions made by Spark.
-
-
-## Executing the whole 
-Using 3 command line windows:
-- One for the Spark container shell 
-- One for running the Kafka producer
-- One for running the Kafka consumer 
-
-In one of the windows run:
-
-        cd kafka 
-        python producer.py
-
-
-In the spark shell run : 
-
-        spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.0 spark_code/real_time_clustering.py
-
-In the 3rd and last window run : 
-
-        cd kafka 
-        python clustering_predictions_consumer.py
+ -  **Training**: we read the stored train dataset using the spark methodread.csv by defining the schema which is an instance of the classStructType containing a list of *StructField* instances where each one represents the column of the dataset. After training the models  we will store the models and relative pre-processing objects inthe folders *models* and *processingobj* respectively.
+ -  **Real-Time Inference**: spark will subscribe to the kafka topic *cdndata* to receive the cdn client messages stream generated by the container **DataProvider** .  In  order  to  apply  the  real-time  inference,we will use the spark *User  Defined  Function* which is a variant of lambda function. This function ,which is namedpredictin our context, takes everrow of the streamed input as an argument and inside we pre-process the data,load the needed models and make the prediction. The prediction messages needs  to  follow  the  schema  described  in  the  ”.json”  files  and  contains  as attributes *sampleID,timestamp and prediction*.  Spark  will  send  the prediction messages to the Kafka topic *cdnresult*. The output mode used to write the streams to Kafka from Spark is *append* which means only the new rows in the streaming data will be written to the sink. 
+## InfluxDB:  
+The  container **Prediction  Loader** is  a  python  container  that  is subscribed to the topic where the Machine Learning predictions are de-livered.
+## Grafana  Dashboards:  
+Grafana  is  used  to  visualize  the  incoming  stream,the ML model predictions, Burrow Kafka metrics, Docker  Host metrics and toanalyze the data by transforming and displaying it on different charts.
+## NetData Dashboard: 
+Netdata is used to identify potential bottlenecks of the host machine that run our system architecture and to display in real-time the following real-time metrics: *CPU usage,disks and I/O operations,networkbandwidth / used sockets,RAM usage(both physical memory and SWAPmemory)*, etc.
+## Kibana Dashboard: 
+Kibana here is used for Docker container logs visualization, aggregation and analysis. The container logs were collected by **Filebeat** and stored in **ElasticSearch**

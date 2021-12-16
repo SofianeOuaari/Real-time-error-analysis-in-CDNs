@@ -5,7 +5,20 @@ Logs will be written in files by Docker. FileBeat then will have the task to rea
 and transfer them to ElasticSearch. So, here, Logstash won't be used and will be substituted by Filebeat 
 as it requires less resources. 
 
-A docker-compose file will be used for the setup with the Elasticsearch, Kibana, and Filbeat services.
+--->For the filebeat.yml config file: 
+
+ -The input type "container" is designed to import the logs from docker
+The only thing that needs to be specified is the location of the log files 
+in the Filebeat container
+
+ -Output needs to be specified to elasticsearch settings in order for Filebeat to ship
+logs there
+
+ -Other settings like add_docker_metadata are there to enrich the logs with more information
+
+
+
+--->A docker-compose file will be used for the setup with the Elasticsearch, Kibana, and Filbeat services.
 The official docker images will be used.
 
 

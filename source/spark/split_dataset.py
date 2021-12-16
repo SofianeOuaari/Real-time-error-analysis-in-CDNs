@@ -1,9 +1,0 @@
-import pandas as pd
-
-df=pd.read_csv("./data/alldata_skab.csv",sep=",")
-df_train=df.iloc[:int(len(df)*0.75)]
-df_test=df.iloc[int(len(df)*0.75):]
-
-
-df_train.to_csv("./data/train.csv",index=False)
-df_test.to_csv("./data/test.csv",index=False)
