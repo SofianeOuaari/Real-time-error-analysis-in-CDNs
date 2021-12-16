@@ -1,5 +1,5 @@
 # Netdata
-![An overview of the Netdata dashboard](https://www.netdata.cloud/wp-content/uploads/2021/05/overview-20210521-2.png)
+![An overview of the Netdata dashboard](Netdata_screenshot.png)
 Netdata is a monitoring, visualization, and troubleshooting solution for systems, containers, services, and applications.
 It can collect thousands of metrics from systems, hardware, and applications.
 
