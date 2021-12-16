@@ -13,9 +13,8 @@ In terminal execute the following command **from this directory**:
 
 The containers must be deployed by stating the name of the app to start.
 
-The containers must be deployed by stating the name of the app to start.
 # How to set environment variables for this project? (without deploying the containers)
-Please not that this step is already included if you deployed the containers with the script above, so it is NOT necessary to do it again. 
+Please note that this step is already included if you deployed the containers with the script above, so it is NOT necessary to do it again. 
  
 
 ## Using Windows:

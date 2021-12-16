@@ -39,7 +39,7 @@ if __name__=="__main__":
     
     model_1.fit(df_train_ohe)
     model_2.fit(df_train[clustering_features].iloc[:10000])
-    model_3.fit(df_train[clustering_features].iloc[:10000])
+    model_3.fit(df_train[clustering_features])
     
     
     
